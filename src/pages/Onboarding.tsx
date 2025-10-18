@@ -4,22 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Users, Building2, Sparkles, Camera, Upload, Music, Film, Palette, PenTool, Code, Mic, FileText, Image, Dumbbell, Gamepad2 } from "lucide-react";
+import { Users, Building2, Sparkles, Camera, Upload, Music, Film, Palette, PenTool, Image, Gamepad2, Lightbulb, Bolt, BadgeDollarSign, Wallet, PersonStanding, Shirt, Smile, Hammer, Wrench } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
-import tribeIcon from "@/assets/onboarding/tribe-3d.png";
-import ideasIcon from "@/assets/onboarding/ideas-3d.png";
-import paidIcon from "@/assets/onboarding/paid-3d.png";
-import creditIcon from "@/assets/onboarding/credit-3d.png";
-import indieIcon from "@/assets/onboarding/indie-3d.png";
-import filmIcon from "@/assets/onboarding/film-3d.png";
-import musicIcon from "@/assets/onboarding/music-3d.png";
-import danceIcon from "@/assets/onboarding/dance-3d.png";
-import photographyIcon from "@/assets/onboarding/photography-3d.png";
-import fashionIcon from "@/assets/onboarding/fashion-3d.png";
-import comedyIcon from "@/assets/onboarding/comedy-3d.png";
-import visualIcon from "@/assets/onboarding/visual-3d.png";
-import writingIcon from "@/assets/onboarding/writing-3d.png";
-import craftsIcon from "@/assets/onboarding/crafts-3d.png";
+import HoloIcon from "@/components/HoloIcon";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -36,16 +23,16 @@ const Onboarding = () => {
   });
 
   const creativeDomainOptions = [
-    { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: indieIcon, color: "from-purple-500 to-cyan-500" },
-    { id: "film", label: "Film", subtitle: "Short films, Documentaries", icon: filmIcon, color: "from-red-500 to-orange-500" },
-    { id: "music", label: "Music", subtitle: "Singer, Producer", icon: musicIcon, color: "from-pink-500 to-purple-500" },
-    { id: "dance", label: "Dance", subtitle: "Performer, Choreographer", icon: danceIcon, color: "from-blue-500 to-cyan-500" },
-    { id: "photography", label: "Photography", subtitle: "Wildlife, Fashion", icon: photographyIcon, color: "from-green-500 to-yellow-500" },
-    { id: "fashion", label: "Fashion", subtitle: "Designer, Stylist", icon: fashionIcon, color: "from-pink-500 to-rose-500" },
-    { id: "comedy", label: "Comedy", subtitle: "Stand-up, Sketch artist", icon: comedyIcon, color: "from-yellow-500 to-orange-500" },
-    { id: "visual", label: "Visual Arts", subtitle: "Painter, Illustrator", icon: visualIcon, color: "from-orange-500 to-pink-500" },
-    { id: "writing", label: "Writing", subtitle: "Screenwriter, Poet", icon: writingIcon, color: "from-cyan-500 to-purple-500" },
-    { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: craftsIcon, color: "from-orange-500 to-teal-500" },
+    { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: Gamepad2 },
+    { id: "film", label: "Film", subtitle: "Short films, Documentaries", icon: Film },
+    { id: "music", label: "Music", subtitle: "Singer, Producer", icon: Music },
+    { id: "dance", label: "Dance", subtitle: "Performer, Choreographer", icon: PersonStanding },
+    { id: "photography", label: "Photography", subtitle: "Wildlife, Fashion", icon: Camera },
+    { id: "fashion", label: "Fashion", subtitle: "Designer, Stylist", icon: Shirt },
+    { id: "comedy", label: "Comedy", subtitle: "Stand-up, Sketch artist", icon: Smile },
+    { id: "visual", label: "Visual Arts", subtitle: "Painter, Illustrator", icon: Palette },
+    { id: "writing", label: "Writing", subtitle: "Screenwriter, Poet", icon: PenTool },
+    { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: Hammer },
   ];
 
   const toggleDomain = (domain: string) => {
@@ -106,20 +93,20 @@ const Onboarding = () => {
 
               <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto relative">
                 <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
-                  <img src={tribeIcon} alt="Build your tribe" className="w-16 h-16 mx-auto mb-2 object-contain" />
-                  <p className="text-sm font-bold">Build Your Tribe</p>
+                  <HoloIcon icon={Users} variant="primary" />
+                  <p className="text-sm font-bold mt-2">Build Your Tribe</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
-                  <img src={ideasIcon} alt="Join big ideas" className="w-16 h-16 mx-auto mb-2 object-contain" />
-                  <p className="text-sm font-bold">Join Big Ideas</p>
+                  <HoloIcon icon={Lightbulb} variant="secondary" />
+                  <p className="text-sm font-bold mt-2">Join Big Ideas</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
-                  <img src={paidIcon} alt="Get paid" className="w-16 h-16 mx-auto mb-2 object-contain" />
-                  <p className="text-sm font-bold">Get Paid</p>
+                  <HoloIcon icon={BadgeDollarSign} variant="primary" />
+                  <p className="text-sm font-bold mt-2">Get Paid</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
-                  <img src={creditIcon} alt="Build creative credit" className="w-16 h-16 mx-auto mb-2 object-contain" />
-                  <p className="text-sm font-bold">Build Creative Credit</p>
+                  <HoloIcon icon={Bolt} variant="secondary" />
+                  <p className="text-sm font-bold mt-2">Build Creative Credit</p>
                 </div>
               </div>
 
@@ -341,19 +328,12 @@ const Onboarding = () => {
                       onClick={() => toggleDomain(domain.id)}
                       className={`group p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 relative overflow-hidden ${
                         isSelected
-                          ? "border-primary bg-gradient-to-br " + domain.color + " bg-opacity-20"
+                          ? "border-primary bg-primary/10 glow-primary"
                           : "border-white/10 hover:border-primary/30"
                       }`}
                     >
-                      {isSelected && (
-                        <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-10 blur-xl`} />
-                      )}
                       <div className="relative z-10">
-                        <img 
-                          src={domain.icon} 
-                          alt={domain.label}
-                          className="h-16 w-16 mb-2 object-contain mx-auto group-hover:scale-110 smooth-transition"
-                        />
+                        <HoloIcon icon={domain.icon as any} size={36} className="mx-auto mb-2" />
                         <h3 className="font-bold text-sm mb-1 text-center">{domain.label}</h3>
                         <p className="text-xs text-muted-foreground text-center">{domain.subtitle}</p>
                       </div>
