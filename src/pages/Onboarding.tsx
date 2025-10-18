@@ -6,6 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, Building2, Sparkles, Camera, Upload, Music, Film, Palette, PenTool, Code, Mic, FileText, Image, Dumbbell, Gamepad2 } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
+import tribeIcon from "@/assets/onboarding/tribe-3d.png";
+import ideasIcon from "@/assets/onboarding/ideas-3d.png";
+import paidIcon from "@/assets/onboarding/paid-3d.png";
+import creditIcon from "@/assets/onboarding/credit-3d.png";
+import indieIcon from "@/assets/onboarding/indie-3d.png";
+import filmIcon from "@/assets/onboarding/film-3d.png";
+import musicIcon from "@/assets/onboarding/music-3d.png";
+import danceIcon from "@/assets/onboarding/dance-3d.png";
+import photographyIcon from "@/assets/onboarding/photography-3d.png";
+import fashionIcon from "@/assets/onboarding/fashion-3d.png";
+import comedyIcon from "@/assets/onboarding/comedy-3d.png";
+import visualIcon from "@/assets/onboarding/visual-3d.png";
+import writingIcon from "@/assets/onboarding/writing-3d.png";
+import craftsIcon from "@/assets/onboarding/crafts-3d.png";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -22,16 +36,16 @@ const Onboarding = () => {
   });
 
   const creativeDomainOptions = [
-    { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: Gamepad2 },
-    { id: "film", label: "Film", subtitle: "Short films, Documentaries", icon: Film },
-    { id: "music", label: "Music", subtitle: "Singer, Producer", icon: Music },
-    { id: "dance", label: "Dance", subtitle: "Performer, Choreographer", icon: Dumbbell },
-    { id: "photography", label: "Photography", subtitle: "Wildlife, Fashion", icon: Camera },
-    { id: "fashion", label: "Fashion", subtitle: "Designer, Stylist", icon: Sparkles },
-    { id: "comedy", label: "Comedy", subtitle: "Stand-up, Sketch artist", icon: Mic },
-    { id: "visual", label: "Visual Arts", subtitle: "Painter, Illustrator", icon: Palette },
-    { id: "writing", label: "Writing", subtitle: "Screenwriter, Poet", icon: PenTool },
-    { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: Building2 },
+    { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: indieIcon, color: "from-purple-500 to-cyan-500" },
+    { id: "film", label: "Film", subtitle: "Short films, Documentaries", icon: filmIcon, color: "from-red-500 to-orange-500" },
+    { id: "music", label: "Music", subtitle: "Singer, Producer", icon: musicIcon, color: "from-pink-500 to-purple-500" },
+    { id: "dance", label: "Dance", subtitle: "Performer, Choreographer", icon: danceIcon, color: "from-blue-500 to-cyan-500" },
+    { id: "photography", label: "Photography", subtitle: "Wildlife, Fashion", icon: photographyIcon, color: "from-green-500 to-yellow-500" },
+    { id: "fashion", label: "Fashion", subtitle: "Designer, Stylist", icon: fashionIcon, color: "from-pink-500 to-rose-500" },
+    { id: "comedy", label: "Comedy", subtitle: "Stand-up, Sketch artist", icon: comedyIcon, color: "from-yellow-500 to-orange-500" },
+    { id: "visual", label: "Visual Arts", subtitle: "Painter, Illustrator", icon: visualIcon, color: "from-orange-500 to-pink-500" },
+    { id: "writing", label: "Writing", subtitle: "Screenwriter, Poet", icon: writingIcon, color: "from-cyan-500 to-purple-500" },
+    { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: craftsIcon, color: "from-orange-500 to-teal-500" },
   ];
 
   const toggleDomain = (domain: string) => {
@@ -92,20 +106,20 @@ const Onboarding = () => {
 
               <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto relative">
                 <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
-                  <div className="text-3xl mb-2">🤝</div>
-                  <p className="text-sm font-bold">Your Tribe</p>
+                  <img src={tribeIcon} alt="Build your tribe" className="w-16 h-16 mx-auto mb-2 object-contain" />
+                  <p className="text-sm font-bold">Build Your Tribe</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
-                  <div className="text-3xl mb-2">💎</div>
-                  <p className="text-sm font-bold">Big Ideas</p>
+                  <img src={ideasIcon} alt="Join big ideas" className="w-16 h-16 mx-auto mb-2 object-contain" />
+                  <p className="text-sm font-bold">Join Big Ideas</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
-                  <div className="text-3xl mb-2">💰</div>
+                  <img src={paidIcon} alt="Get paid" className="w-16 h-16 mx-auto mb-2 object-contain" />
                   <p className="text-sm font-bold">Get Paid</p>
                 </div>
                 <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
-                  <div className="text-3xl mb-2">⚡</div>
-                  <p className="text-sm font-bold">On-Chain Cred</p>
+                  <img src={creditIcon} alt="Build creative credit" className="w-16 h-16 mx-auto mb-2 object-contain" />
+                  <p className="text-sm font-bold">Build Creative Credit</p>
                 </div>
               </div>
 
@@ -278,10 +292,9 @@ const Onboarding = () => {
                 >
                   <Users className="h-10 w-10 mb-4 text-primary" />
                   <h3 className="font-bold text-lg mb-2">Independent Creator</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-muted-foreground">
                     Musicians, filmmakers, designers, photographers, writers, dancers…
                   </p>
-                  <span className="text-sm font-medium text-primary">Select →</span>
                 </button>
 
                 <button
@@ -294,10 +307,9 @@ const Onboarding = () => {
                 >
                   <Building2 className="h-10 w-10 mb-4 text-secondary" />
                   <h3 className="font-bold text-lg mb-2">Commercial Creator</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-muted-foreground">
                     Studios, labels, agencies, production houses, creative DAOs…
                   </p>
-                  <span className="text-sm font-medium text-secondary">Select →</span>
                 </button>
               </div>
 
@@ -321,23 +333,30 @@ const Onboarding = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                {creativeDomainOptions.map((domain, index) => {
-                  const Icon = domain.icon;
+                {creativeDomainOptions.map((domain) => {
                   const isSelected = creativeDomains.includes(domain.id);
-                  const colorClass = index % 2 === 0 ? 'primary' : 'secondary';
                   return (
                     <button
                       key={domain.id}
                       onClick={() => toggleDomain(domain.id)}
-                      className={`p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 ${
+                      className={`group p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 relative overflow-hidden ${
                         isSelected
-                          ? `border-${colorClass} bg-${colorClass}/10 glow-${colorClass}`
+                          ? "border-primary bg-gradient-to-br " + domain.color + " bg-opacity-20"
                           : "border-white/10 hover:border-primary/30"
                       }`}
                     >
-                      <Icon className={`h-6 w-6 mb-2 ${isSelected ? `text-${colorClass}` : "text-muted-foreground"}`} />
-                      <h3 className="font-bold text-sm mb-1">{domain.label}</h3>
-                      <p className="text-xs text-muted-foreground">{domain.subtitle}</p>
+                      {isSelected && (
+                        <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-10 blur-xl`} />
+                      )}
+                      <div className="relative z-10">
+                        <img 
+                          src={domain.icon} 
+                          alt={domain.label}
+                          className="h-16 w-16 mb-2 object-contain mx-auto group-hover:scale-110 smooth-transition"
+                        />
+                        <h3 className="font-bold text-sm mb-1 text-center">{domain.label}</h3>
+                        <p className="text-xs text-muted-foreground text-center">{domain.subtitle}</p>
+                      </div>
                     </button>
                   );
                 })}
