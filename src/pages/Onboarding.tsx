@@ -44,6 +44,9 @@ const Onboarding = () => {
   };
 
   const handleComplete = () => {
+    // Set flag to trigger guided tour
+    sessionStorage.setItem("from-onboarding", "true");
+    
     // Simulate minting animation delay
     setTimeout(() => {
       navigate("/");

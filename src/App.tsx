@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { GuidedTour } from "./components/GuidedTour";
 import Onboarding from "./pages/Onboarding";
 import PostFeed from "./pages/PostFeed";
 import CollabFeed from "./pages/CollabFeed";
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <GuidedTour />
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<PostFeed />} />
