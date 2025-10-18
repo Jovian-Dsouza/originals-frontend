@@ -22,6 +22,7 @@ const Onboarding = () => {
   });
 
   const creativeDomainOptions = [
+    { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: Gamepad2 },
     { id: "film", label: "Film", subtitle: "Short films, Documentaries", icon: Film },
     { id: "music", label: "Music", subtitle: "Singer, Producer", icon: Music },
     { id: "dance", label: "Dance", subtitle: "Performer, Choreographer", icon: Dumbbell },
@@ -31,7 +32,6 @@ const Onboarding = () => {
     { id: "visual", label: "Visual Arts", subtitle: "Painter, Illustrator", icon: Palette },
     { id: "writing", label: "Writing", subtitle: "Screenwriter, Poet", icon: PenTool },
     { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: Building2 },
-    { id: "digital", label: "Digital Creators", subtitle: "Streamers, Meme-makers", icon: Gamepad2 },
   ];
 
   const toggleDomain = (domain: string) => {
@@ -69,58 +69,56 @@ const Onboarding = () => {
 
           {/* Page 1: Welcome / Vision Intro */}
           {page === 1 && (
-            <div className="glass-card rounded-3xl p-8 md:p-12 space-y-8 animate-fade-in text-center">
-              <div className="relative h-32 w-32 mx-auto">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow opacity-50 blur-xl" />
-                <div className="relative h-32 w-32 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-float">
-                  <Sparkles className="h-16 w-16 text-white" />
+            <div className="glass-card rounded-3xl p-8 md:p-12 space-y-12 animate-fade-in text-center overflow-hidden relative">
+              {/* Animated background elements */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+              
+              <div className="relative">
+                <div className="relative h-40 w-40 mx-auto mb-6">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow opacity-60 blur-2xl" />
+                  <div className="relative h-40 w-40 rounded-full bg-gradient-to-br from-primary via-secondary to-primary flex items-center justify-center animate-float border-4 border-white/10">
+                    <Sparkles className="h-20 w-20 text-white animate-pulse" />
+                  </div>
+                </div>
+
+                <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent animate-float">
+                  Where careers don't need cubicles
+                </h2>
+                <p className="text-lg text-muted-foreground/80 mb-8">
+                  Connect • Collaborate • Get Paid • Build Reputation
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto relative">
+                <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
+                  <div className="text-3xl mb-2">🤝</div>
+                  <p className="text-sm font-bold">Your Tribe</p>
+                </div>
+                <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
+                  <div className="text-3xl mb-2">💎</div>
+                  <p className="text-sm font-bold">Big Ideas</p>
+                </div>
+                <div className="glass-card p-4 rounded-2xl border border-primary/20 hover:border-primary/40 smooth-transition hover:scale-105">
+                  <div className="text-3xl mb-2">💰</div>
+                  <p className="text-sm font-bold">Get Paid</p>
+                </div>
+                <div className="glass-card p-4 rounded-2xl border border-secondary/20 hover:border-secondary/40 smooth-transition hover:scale-105">
+                  <div className="text-3xl mb-2">⚡</div>
+                  <p className="text-sm font-bold">On-Chain Cred</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold">Where careers don't need cubicles</h2>
-              </div>
-
-              <div className="grid gap-6 text-left">
-                <div className="flex gap-4">
-                  <div className="text-2xl">1️⃣</div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Connect with your tribe</h3>
-                    <p className="text-sm text-muted-foreground">Find like-minded creators, storytellers, designers, and doers.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="text-2xl">2️⃣</div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Collaborate on your next big thing</h3>
-                    <p className="text-sm text-muted-foreground">Credit each other. Build together. Grow faster.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="text-2xl">3️⃣</div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Find gigs & opportunities</h3>
-                    <p className="text-sm text-muted-foreground">Apply to paid projects or get discovered by studios & brands.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="text-2xl">4️⃣</div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Build your creative reputation</h3>
-                    <p className="text-sm text-muted-foreground">Earn endorsements, show off your portfolio, and get verified with on-chain cred.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-4">
+              <div className="space-y-3 pt-4 relative">
                 <Button
                   onClick={() => {
                     setLoginMethod("zora");
                     setPage(2);
                   }}
-                  className="w-full bg-gradient-to-r from-primary to-secondary"
+                  className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                   size="lg"
                 >
+                  <Sparkles className="mr-2 h-5 w-5" />
                   Login with Zora
                 </Button>
                 <Button
@@ -129,7 +127,7 @@ const Onboarding = () => {
                     setPage(2);
                   }}
                   variant="outline"
-                  className="w-full"
+                  className="w-full border-primary/30 hover:border-primary"
                   size="lg"
                 >
                   Login with Email
@@ -142,8 +140,8 @@ const Onboarding = () => {
           {page === 2 && loginMethod === "email" && (
             <div className="glass-card rounded-3xl p-8 space-y-6 animate-fade-in">
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">Mint Your Creator Coin</h2>
-                <p className="text-sm text-muted-foreground">Think of this as your creative business card — and your on-chain identity.</p>
+                <h2 className="text-2xl font-bold">Mint your creator coin</h2>
+                <p className="text-sm text-muted-foreground">Your creative business card & on-chain identity</p>
               </div>
 
               <div className="space-y-6">
@@ -212,7 +210,7 @@ const Onboarding = () => {
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Mint Creator Coin & Continue
+                Mint Creator Coin
               </Button>
             </div>
           )}
@@ -279,7 +277,7 @@ const Onboarding = () => {
                   }`}
                 >
                   <Users className="h-10 w-10 mb-4 text-primary" />
-                  <h3 className="font-bold text-lg mb-2">🧍‍🎨 Independent Creator</h3>
+                  <h3 className="font-bold text-lg mb-2">Independent Creator</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     Musicians, filmmakers, designers, photographers, writers, dancers…
                   </p>
@@ -295,7 +293,7 @@ const Onboarding = () => {
                   }`}
                 >
                   <Building2 className="h-10 w-10 mb-4 text-secondary" />
-                  <h3 className="font-bold text-lg mb-2">🏢 Commercial Creator</h3>
+                  <h3 className="font-bold text-lg mb-2">Commercial Creator</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     Studios, labels, agencies, production houses, creative DAOs…
                   </p>
@@ -323,19 +321,21 @@ const Onboarding = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                {creativeDomainOptions.map((domain) => {
+                {creativeDomainOptions.map((domain, index) => {
                   const Icon = domain.icon;
+                  const isSelected = creativeDomains.includes(domain.id);
+                  const colorClass = index % 2 === 0 ? 'primary' : 'secondary';
                   return (
                     <button
                       key={domain.id}
                       onClick={() => toggleDomain(domain.id)}
-                      className={`p-4 rounded-xl border-2 smooth-transition text-left ${
-                        creativeDomains.includes(domain.id)
-                          ? "border-primary bg-primary/10 glow-primary"
+                      className={`p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 ${
+                        isSelected
+                          ? `border-${colorClass} bg-${colorClass}/10 glow-${colorClass}`
                           : "border-white/10 hover:border-primary/30"
                       }`}
                     >
-                      <Icon className={`h-6 w-6 mb-2 ${creativeDomains.includes(domain.id) ? "text-primary" : "text-muted-foreground"}`} />
+                      <Icon className={`h-6 w-6 mb-2 ${isSelected ? `text-${colorClass}` : "text-muted-foreground"}`} />
                       <h3 className="font-bold text-sm mb-1">{domain.label}</h3>
                       <p className="text-xs text-muted-foreground">{domain.subtitle}</p>
                     </button>
@@ -461,7 +461,7 @@ const Onboarding = () => {
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Enter Dashboard →
+                Enter Nexus →
               </Button>
             </div>
           )}
