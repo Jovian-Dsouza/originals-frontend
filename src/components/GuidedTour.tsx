@@ -52,14 +52,24 @@ export function GuidedTour() {
 
   useEffect(() => {
     // Check if user just completed onboarding
-    const tourCompleted = localStorage.getItem("originals-tour-completed");
-    const fromOnboarding = sessionStorage.getItem("from-onboarding");
-    
-    if (fromOnboarding === "true" && !tourCompleted) {
-      setIsActive(true);
-      sessionStorage.removeItem("from-onboarding");
-    }
-  }, []);
+    const checkTour = () => {
+      const tourCompleted = localStorage.getItem("originals-tour-completed");
+      const fromOnboarding = sessionStorage.getItem("from-onboarding");
+      
+      if (fromOnboarding === "true" && !tourCompleted) {
+        setIsActive(true);
+        sessionStorage.removeItem("from-onboarding");
+      }
+    };
+
+    // Check immediately
+    checkTour();
+
+    // Also check after a short delay (in case navigation is still happening)
+    const timeout = setTimeout(checkTour, 100);
+
+    return () => clearTimeout(timeout);
+  }, [location.pathname]);
 
   const handleNext = () => {
     if (currentStep < tourSteps.length - 1) {
