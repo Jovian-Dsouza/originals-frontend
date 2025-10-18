@@ -63,7 +63,7 @@ const Onboarding = () => {
           {/* Logo */}
           <div className="text-center animate-fade-in">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2 animate-float">
-              Sideway
+              Originals
             </h1>
             <p className="text-sm text-muted-foreground">On-chain Collaboration Network</p>
           </div>
@@ -255,7 +255,7 @@ const Onboarding = () => {
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Sync to Sideway Profile
+                Sync to Originals Profile
               </Button>
             </div>
           )}
@@ -449,7 +449,7 @@ const Onboarding = () => {
               </div>
 
               <div className="space-y-3">
-                <h2 className="text-3xl font-bold">You're in the Sideway Network.</h2>
+                <h2 className="text-3xl font-bold">You're in the Originals Network.</h2>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
                   Every idea you mint from here carries your credit forever.
                 </p>
