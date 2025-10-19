@@ -17,38 +17,38 @@ const Profile = () => {
     {
       id: "1",
       imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400",
-      likes: 234,
-      comments: 45,
+      marketCap: 234,
+      marketCapChange: "up",
     },
     {
       id: "2",
       imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400",
-      likes: 567,
-      comments: 89,
+      marketCap: 567,
+      marketCapChange: "down",
     },
     {
       id: "3",
       imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=400",
-      likes: 892,
-      comments: 123,
+      marketCap: 892,
+      marketCapChange: "up",
     },
     {
       id: "4",
       imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400",
-      likes: 445,
-      comments: 67,
+      marketCap: 445,
+      marketCapChange: "up",
     },
     {
       id: "5",
       imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-      likes: 678,
-      comments: 91,
+      marketCap: 678,
+      marketCapChange: "down",
     },
     {
       id: "6",
       imageUrl: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400",
-      likes: 523,
-      comments: 78,
+      marketCap: 523,
+      marketCapChange: "up",
     },
   ];
 
@@ -211,13 +211,10 @@ const Profile = () => {
                     alt="Post"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center gap-4 text-white">
-                    <span className="flex items-center gap-1 text-sm font-bold">
-                      ❤️ {post.likes}
-                    </span>
-                    <span className="flex items-center gap-1 text-sm font-bold">
-                      💬 {post.comments}
-                    </span>
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center text-white">
+                    <div className={`text-lg font-bold ${post.marketCapChange === "up" ? "text-green-500" : "text-red-500"}`}>
+                      ${post.marketCap}
+                    </div>
                   </div>
                 </div>
               ))}
