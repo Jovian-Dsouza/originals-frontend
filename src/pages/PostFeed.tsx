@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Camera, Lightbulb, Sparkles, Plus } from "lucide-react";
+import { MessageCircle, Share2, MoreHorizontal, Camera, Lightbulb, Sparkles, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,8 @@ const PostFeed = () => {
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=dharma",
       imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
       description: "New VFX breakdown coming soon 🔥✨",
-      likes: 234,
+      marketCap: 234,
+      marketCapChange: "up",
       comments: 45,
       collaborators: [],
       contentType: "BTS" as const,
@@ -28,7 +29,8 @@ const PostFeed = () => {
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=luna",
       imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
       description: "Studio sessions with @jordan.wav 🎵",
-      likes: 567,
+      marketCap: 567,
+      marketCapChange: "down",
       comments: 89,
       collaborators: [
         { name: "jordan.wav", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=jordan" },
@@ -41,7 +43,8 @@ const PostFeed = () => {
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=koda",
       imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
       description: "Big team effort on this one 💫 shoutout to everyone involved",
-      likes: 892,
+      marketCap: 892,
+      marketCapChange: "up",
       comments: 123,
       collaborators: [
         { name: "river.anim", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=river" },
@@ -136,13 +139,9 @@ const PostFeed = () => {
               {/* Action Buttons */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-white hover:bg-white/20 h-8 w-8"
-                  >
-                    <Heart className="h-6 w-6" />
-                  </Button>
+                  <div className={`text-sm font-bold ${post.marketCapChange === "up" ? "text-green-500" : "text-red-500"}`}>
+                    ${post.marketCap}
+                  </div>
                   <Button 
                     variant="ghost" 
                     size="icon" 
@@ -158,27 +157,13 @@ const PostFeed = () => {
                     <Share2 className="h-6 w-6" />
                   </Button>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Button 
-                    variant="default"
-                    size="sm"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6"
-                  >
-                    Buy
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-white hover:bg-white/20 h-8 w-8"
-                  >
-                    <Bookmark className="h-6 w-6" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Likes Count */}
-              <div className="mt-2">
-                <p className="text-white text-xs font-semibold">{post.likes} likes</p>
+                <Button 
+                  variant="default"
+                  size="sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6"
+                >
+                  Buy
+                </Button>
               </div>
             </div>
           </div>
@@ -191,7 +176,7 @@ const PostFeed = () => {
       </div>
 
       {/* Floating Create Button */}
-      <Link to="/create-content" className="fixed bottom-24 right-4 z-30">
+      <Link to="/create-content" className="fixed bottom-28 right-4 z-30">
         <Button
           size="lg"
           className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
