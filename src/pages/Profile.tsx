@@ -8,9 +8,9 @@ const Profile = () => {
   const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
   
   const stats = [
-    { label: "CC Price", value: "0.08 ETH", change: "+12%" },
-    { label: "Projects", value: "24", change: "+3" },
-    { label: "Collabs", value: "47", change: "+8" },
+    { label: "CC Market Cap", value: "0.08 ETH", change: "+12%" },
+    { label: "Startups", value: "24", change: "+3" },
+    { label: "Gigs", value: "47", change: "+8" },
   ];
 
   const finalPosts = [
@@ -52,20 +52,73 @@ const Profile = () => {
     },
   ];
 
-  const activePosts = [
+  // Startups (Self-initiated projects)
+  const myStartups = [
     {
       id: "1",
-      title: "Urban Soundscape",
-      collaborators: ["Alex", "Jordan", "Casey"],
-      status: "In Progress",
-      progress: 65,
+      title: "Neon Dream VFX",
+      role: "VFX Artist",
+      openings: 2,
+      pings: 15,
+      status: "Active",
     },
     {
       id: "2",
-      title: "Digital Dreams",
-      collaborators: ["Taylor", "Morgan"],
-      status: "Waiting",
-      progress: 30,
+      title: "Cyber Beats Mix",
+      role: "Producer",
+      openings: 1,
+      pings: 8,
+      status: "Active",
+    },
+  ];
+
+  // Ongoing collabs (Gigs - joined other people's collabs)
+  const ongoingGigs = [
+    {
+      id: "1",
+      project: "Urban Soundscape",
+      posterName: "Alex Chen",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      role: "Sound Designer",
+      type: "Part-time",
+      status: "In Progress",
+    },
+    {
+      id: "2",
+      project: "Digital Dreams",
+      posterName: "Jordan Blake",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      role: "Animator",
+      type: "One-time",
+      status: "In Progress",
+    },
+  ];
+
+  // Completed collabs (Gigs - finished)
+  const completedGigs = [
+    {
+      id: "1",
+      project: "Retro Vibes",
+      posterName: "Taylor Swift",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
+      role: "VFX Artist",
+      type: "Full-time",
+    },
+    {
+      id: "2",
+      project: "Night City",
+      posterName: "Morgan Lee",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan",
+      role: "Compositor",
+      type: "Hourly",
+    },
+    {
+      id: "3",
+      project: "Cosmic Dreams",
+      posterName: "Casey Johnson",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey",
+      role: "3D Artist",
+      type: "Part-time",
     },
   ];
 
@@ -118,15 +171,41 @@ const Profile = () => {
       </header>
 
       <main className="max-w-screen-xl mx-auto p-4">
-        <Tabs defaultValue="final" className="w-full">
+        <Tabs defaultValue="startups" className="w-full">
           <TabsList className="w-full grid grid-cols-3 mb-6">
-            <TabsTrigger value="final">Final Posts</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="startups">My Startups</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="professional">Pro</TabsTrigger>
           </TabsList>
 
-          {/* Tab 1: Instagram-style grid of final posts */}
-          <TabsContent value="final">
+          {/* Tab 1: My Startups (Self-initiated collab posts) */}
+          <TabsContent value="startups" className="space-y-4">
+            {myStartups.map((startup) => (
+              <div key={startup.id} className="glass-card rounded-2xl p-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-lg">{startup.title}</h3>
+                  <Badge variant="default">{startup.status}</Badge>
+                </div>
+                
+                <p className="text-sm text-muted-foreground">
+                  {startup.role} • {startup.openings} openings
+                </p>
+
+                <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Interest Pings</p>
+                    <p className="text-2xl font-bold text-primary">{startup.pings}</p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    View Pings
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </TabsContent>
+
+          {/* Tab 2: Content (Final posts) */}
+          <TabsContent value="content">
             <div className="grid grid-cols-3 gap-1">
               {finalPosts.map((post) => (
                 <div key={post.id} className="aspect-square relative group cursor-pointer">
@@ -146,44 +225,6 @@ const Profile = () => {
                 </div>
               ))}
             </div>
-          </TabsContent>
-
-          {/* Tab 2: Active posts with collaborators */}
-          <TabsContent value="active" className="space-y-4">
-            {activePosts.map((post) => (
-              <div key={post.id} className="glass-card rounded-2xl p-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-lg">{post.title}</h3>
-                  <Badge variant={post.status === "In Progress" ? "default" : "outline"}>
-                    {post.status}
-                  </Badge>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Collaborators:</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {post.collaborators.map((name) => (
-                      <Badge key={name} variant="secondary" className="text-xs">
-                        {name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Progress</span>
-                    <span className="font-mono font-bold">{post.progress}%</span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-primary to-secondary"
-                      style={{ width: `${post.progress}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
           </TabsContent>
 
           {/* Tab 3: Professional profile */}
@@ -210,9 +251,9 @@ const Profile = () => {
             {/* Skills Section */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Skills & Rates
+                Skills
               </h3>
-              <div className="glass-card rounded-2xl p-6 space-y-4">
+              <div className="glass-card rounded-2xl p-6">
                 <div className="flex gap-2 flex-wrap">
                   {skills.map((skill) => (
                     <Badge key={skill} variant="secondary">
@@ -220,46 +261,54 @@ const Profile = () => {
                     </Badge>
                   ))}
                 </div>
-                <div className="pt-2 border-t border-white/10">
-                  <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                  <p className="text-2xl font-bold font-mono">$150/hr</p>
-                </div>
               </div>
             </div>
 
-            {/* Ongoing Collaborations */}
+            {/* Ongoing Gigs */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Ongoing Collaborations
+                Ongoing Gigs
               </h3>
               <div className="glass-card rounded-2xl p-6 space-y-3">
-                {[1, 2].map((i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-bold text-sm">Project {i}</p>
-                      <p className="text-xs text-muted-foreground">15% share • Active</p>
+                {ongoingGigs.map((gig) => (
+                  <div key={gig.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+                      <img src={gig.posterAvatar} alt={gig.posterName} className="w-full h-full" />
                     </div>
-                    <Badge variant="default">Active</Badge>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm">{gig.project}</p>
+                      <p className="text-xs text-muted-foreground">by {gig.posterName}</p>
+                      <div className="flex gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">{gig.role}</Badge>
+                        <Badge variant="secondary" className="text-xs">{gig.type}</Badge>
+                      </div>
+                    </div>
+                    <Clock className="h-5 w-5 text-primary flex-shrink-0" />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Completed Collaborations */}
+            {/* Completed Gigs */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Completed Collaborations
+                Completed Gigs
               </h3>
               <div className="glass-card rounded-2xl p-6 space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <CheckCircle2 className="h-5 w-5 text-secondary" />
-                    <div className="flex-1">
-                      <p className="font-bold text-sm">Collaboration {i}</p>
-                      <p className="text-xs text-muted-foreground">12% share • Completed</p>
+                {completedGigs.map((gig) => (
+                  <div key={gig.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+                      <img src={gig.posterAvatar} alt={gig.posterName} className="w-full h-full" />
                     </div>
-                    <Verified className="h-4 w-4 text-secondary" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm">{gig.project}</p>
+                      <p className="text-xs text-muted-foreground">by {gig.posterName}</p>
+                      <div className="flex gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">{gig.role}</Badge>
+                        <Badge variant="secondary" className="text-xs">{gig.type}</Badge>
+                      </div>
+                    </div>
+                    <CheckCircle2 className="h-5 w-5 text-secondary flex-shrink-0" />
                   </div>
                 ))}
               </div>
