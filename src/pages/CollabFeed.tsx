@@ -168,29 +168,26 @@ const CollabFeed = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   
-                  {/* Status Badge */}
+                  {/* Role Badge */}
                   <Badge 
                     className="absolute top-4 right-4 bg-primary/80 backdrop-blur-sm"
                   >
-                    {collab.status}
+                    {collab.role}
                   </Badge>
                 </div>
 
                 {/* Card Content */}
                 <div className="p-6 space-y-4">
                   <div>
-                    <h2 className="text-3xl font-bold mb-3">{collab.title}</h2>
-                    <div className="flex items-center gap-3 mb-3">
-                      <Avatar className="h-10 w-10 border-2 border-primary/30">
+                    <h2 className="text-3xl font-bold mb-2">{collab.title}</h2>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6 border border-primary/20">
                         <AvatarImage src={collab.creatorAvatar} alt={collab.creator} />
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
                           {collab.creator.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="font-semibold text-base">@{collab.creator}</p>
-                        <p className="text-sm text-muted-foreground">Looking for {collab.role}</p>
-                      </div>
+                      <p className="text-sm text-muted-foreground">@{collab.creator}</p>
                     </div>
                   </div>
 
