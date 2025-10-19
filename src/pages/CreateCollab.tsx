@@ -58,7 +58,7 @@ const CreatePost = () => {
       return;
     }
     toast.success("PostCoin minted successfully!");
-    navigate("/");
+    navigate("/feed");
   };
 
   return (

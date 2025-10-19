@@ -35,7 +35,7 @@ const CreateContent = () => {
     }
 
     toast.success("Content posted successfully!");
-    navigate("/");
+    navigate("/feed");
   };
 
   if (!mode) {

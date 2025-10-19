@@ -5,7 +5,7 @@ const BottomNav = () => {
   const location = useLocation();
   
   const navItems = [
-    { path: "/", icon: Image, label: "PostFeed" },
+    { path: "/feed", icon: Image, label: "PostFeed" },
     { path: "/collab", icon: Handshake, label: "CollabFeed" },
     { path: "/contracts", icon: FileText, label: "Contracts" },
     { path: "/profile", icon: User, label: "Profile" },

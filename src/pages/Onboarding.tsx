@@ -49,7 +49,7 @@ const Onboarding = () => {
     
     // Simulate minting animation delay
     setTimeout(() => {
-      navigate("/");
+      navigate("/feed");
     }, 2000);
   };
 

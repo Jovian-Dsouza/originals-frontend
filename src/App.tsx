@@ -25,8 +25,8 @@ const App = () => (
         <GuidedTour />
         <TourDebugButton />
         <Routes>
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/" element={<PostFeed />} />
+          <Route path="/" element={<Onboarding />} />
+          <Route path="/feed" element={<PostFeed />} />
           <Route path="/collab" element={<CollabFeed />} />
           <Route path="/contracts" element={<Contracts />} />
           <Route path="/profile" element={<Profile />} />
