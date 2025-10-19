@@ -10,7 +10,8 @@ import PostFeed from "./pages/PostFeed";
 import CollabFeed from "./pages/CollabFeed";
 import Contracts from "./pages/Contracts";
 import Profile from "./pages/Profile";
-import CreatePost from "./pages/CreatePost";
+import CreateCollab from "./pages/CreateCollab";
+import CreateContent from "./pages/CreateContent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,7 +30,8 @@ const App = () => (
           <Route path="/collab" element={<CollabFeed />} />
           <Route path="/contracts" element={<Contracts />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/create" element={<CreatePost />} />
+          <Route path="/create-collab" element={<CreateCollab />} />
+          <Route path="/create-content" element={<CreateContent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -32,18 +32,27 @@ const BottomNav = () => {
           </Link>
         ))}
         
-        {/* Floating Create Button */}
-        <Link
-          to="/create"
-          className="absolute -top-6 left-1/2 -translate-x-1/2"
-        >
-          <Button
-            size="lg"
-            className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
-        </Link>
+        {/* Floating Create Buttons */}
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-3">
+          <Link to="/create-collab">
+            <Button
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
+              title="Post Collab"
+            >
+              <Handshake className="h-5 w-5" />
+            </Button>
+          </Link>
+          <Link to="/create-content">
+            <Button
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-r from-secondary to-accent hover:scale-110 smooth-transition shadow-lg glow-secondary"
+              title="Post Content"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </nav>
   );
