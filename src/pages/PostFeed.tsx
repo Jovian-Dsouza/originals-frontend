@@ -101,7 +101,7 @@ const PostFeed = () => {
               {/* Description */}
               <div className="mb-4">
                 <p className="text-white text-sm">
-                  <span className="font-semibold">{post.creator}</span> {post.description}
+                  {post.description}
                 </p>
               </div>
 
