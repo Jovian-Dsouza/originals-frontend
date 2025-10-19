@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, X, Heart, Info } from "lucide-react";
+import { Filter, X, Heart, Info, Handshake } from "lucide-react";
 
 const CollabFeed = () => {
   const [filter, setFilter] = useState<"all" | "open" | "shortlisted">("all");
@@ -198,6 +199,16 @@ const CollabFeed = () => {
           </div>
         )}
       </main>
+
+      {/* Floating Create Collab Button */}
+      <Link to="/create-collab" className="fixed bottom-24 right-4 z-30">
+        <Button
+          size="lg"
+          className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
+        >
+          <Handshake className="h-5 w-5" />
+        </Button>
+      </Link>
 
       <BottomNav />
     </div>

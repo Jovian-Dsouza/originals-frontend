@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Image, Handshake, FileText, User, Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { Image, Handshake, FileText, User } from "lucide-react";
 
 const BottomNav = () => {
   const location = useLocation();
@@ -31,28 +30,6 @@ const BottomNav = () => {
             <span className="text-xs font-medium">{item.label}</span>
           </Link>
         ))}
-        
-        {/* Floating Create Buttons */}
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-3">
-          <Link to="/create-collab">
-            <Button
-              size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
-              title="Post Collab"
-            >
-              <Handshake className="h-5 w-5" />
-            </Button>
-          </Link>
-          <Link to="/create-content">
-            <Button
-              size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-secondary to-accent hover:scale-110 smooth-transition shadow-lg glow-secondary"
-              title="Post Content"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
-          </Link>
-        </div>
       </div>
     </nav>
   );

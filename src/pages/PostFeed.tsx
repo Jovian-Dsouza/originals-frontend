@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Camera, Lightbulb, Sparkles } from "lucide-react";
+import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Camera, Lightbulb, Sparkles, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -188,6 +189,16 @@ const PostFeed = () => {
       <div className="absolute top-0 left-0 right-0 z-20 p-4 flex items-center justify-center bg-gradient-to-b from-black/50 to-transparent">
         <h1 className="text-xl font-bold text-white">Originals</h1>
       </div>
+
+      {/* Floating Create Button */}
+      <Link to="/create-content" className="fixed bottom-24 right-4 z-30">
+        <Button
+          size="lg"
+          className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      </Link>
 
       <BottomNav />
     </div>

@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 const CreateContent = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"new" | "update" | null>(null);
+  const [mode, setMode] = useState<"indie" | "collab" | null>(null);
   const [selectedCollab, setSelectedCollab] = useState("");
   const [stage, setStage] = useState("");
   const [title, setTitle] = useState("");
@@ -25,11 +25,11 @@ const CreateContent = () => {
   ];
 
   const handlePublish = () => {
-    if (mode === "new" && (!title || !contentType)) {
+    if (mode === "indie" && (!title || !contentType)) {
       toast.error("Please fill in all required fields");
       return;
     }
-    if (mode === "update" && (!selectedCollab || !stage)) {
+    if (mode === "collab" && (!selectedCollab || !stage)) {
       toast.error("Please select collab and stage");
       return;
     }
@@ -52,11 +52,11 @@ const CreateContent = () => {
           </Button>
 
           <h1 className="text-3xl font-bold mb-2">Post Content</h1>
-          <p className="text-muted-foreground mb-8">Choose how you want to post</p>
+          <p className="text-muted-foreground mb-8">Choose your content type</p>
 
           <div className="grid gap-4">
             <button
-              onClick={() => setMode("new")}
+              onClick={() => setMode("indie")}
               className="p-6 border-2 border-border hover:border-primary rounded-lg smooth-transition text-left group"
             >
               <div className="flex items-start gap-4">
@@ -64,16 +64,16 @@ const CreateContent = () => {
                   <Plus className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-1">New Post</h3>
+                  <h3 className="text-xl font-semibold mb-1">Indie Content</h3>
                   <p className="text-muted-foreground text-sm">
-                    Share standalone content, thoughts, or educational material
+                    Share your own standalone work, thoughts, or creations
                   </p>
                 </div>
               </div>
             </button>
 
             <button
-              onClick={() => setMode("update")}
+              onClick={() => setMode("collab")}
               className="p-6 border-2 border-border hover:border-primary rounded-lg smooth-transition text-left group"
             >
               <div className="flex items-start gap-4">
@@ -81,9 +81,9 @@ const CreateContent = () => {
                   <Upload className="h-6 w-6 text-secondary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-1">Update Existing</h3>
+                  <h3 className="text-xl font-semibold mb-1">Collab Content</h3>
                   <p className="text-muted-foreground text-sm">
-                    Add BTS or Release content to an existing collab
+                    Add BTS or Release updates to an existing collaboration
                   </p>
                 </div>
               </div>
@@ -107,16 +107,16 @@ const CreateContent = () => {
         </Button>
 
         <h1 className="text-3xl font-bold mb-2">
-          {mode === "new" ? "New Post" : "Update Existing Collab"}
+          {mode === "indie" ? "Indie Content" : "Collab Content"}
         </h1>
         <p className="text-muted-foreground mb-8">
-          {mode === "new" 
-            ? "Share your content with the community" 
+          {mode === "indie" 
+            ? "Share your independent work with the community" 
             : "Add progress updates to your collab"}
         </p>
 
         <div className="space-y-6">
-          {mode === "update" && (
+          {mode === "collab" && (
             <>
               <div className="space-y-2">
                 <Label>Select Collab</Label>
@@ -149,7 +149,7 @@ const CreateContent = () => {
             </>
           )}
 
-          {mode === "new" && (
+          {mode === "indie" && (
             <>
               <div className="space-y-2">
                 <Label>Content Type</Label>
