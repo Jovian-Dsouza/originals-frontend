@@ -92,32 +92,29 @@ const Contracts = () => {
           </TabsList>
 
           {/* Pings Received Tab */}
-          <TabsContent value="received" className="space-y-4">
+          <TabsContent value="received" className="space-y-3">
             {pingsReceived.map((ping) => (
               <div
                 key={ping.id}
-                className="glass-card rounded-2xl p-6 space-y-4"
+                className="border-b border-white/10 p-4 hover:bg-muted/20 smooth-transition"
               >
-                <div className="flex items-start gap-4">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
                     <img src={ping.userAvatar} alt={ping.userName} className="w-full h-full" />
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-bold text-lg">{ping.userName}</h3>
+                      <h3 className="font-bold">{ping.userName}</h3>
                       <span className="text-xs text-muted-foreground">{ping.pingTime}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Interested in: <span className="text-foreground font-semibold">{ping.interestedRole}</span>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {ping.interestedRole} • {ping.collabPost}
                     </p>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      For your collab: <span className="text-secondary font-semibold">{ping.collabPost}</span>
-                    </p>
-                    <p className="text-sm mb-3">{ping.bio}</p>
-                    <div className="flex gap-2 flex-wrap mb-4">
+                    <p className="text-sm text-muted-foreground mb-2">{ping.bio}</p>
+                    <div className="flex gap-1 flex-wrap">
                       {ping.skills.map((skill) => (
-                        <Badge key={skill} variant="secondary" className="text-xs">
+                        <Badge key={skill} variant="secondary" className="text-xs px-2 py-0">
                           {skill}
                         </Badge>
                       ))}
@@ -125,17 +122,17 @@ const Contracts = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button variant="default" className="flex-1">
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                <div className="flex gap-2 ml-15">
+                  <Button variant="default" size="sm" className="flex-1">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
                     Accept
                   </Button>
-                  <Button variant="outline" className="flex-1">
-                    <User className="h-4 w-4 mr-2" />
-                    View Profile
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <User className="h-3 w-3 mr-1" />
+                    Profile
                   </Button>
-                  <Button variant="ghost" size="icon">
-                    <X className="h-4 w-4" />
+                  <Button variant="ghost" size="sm">
+                    <X className="h-3 w-3" />
                   </Button>
                 </div>
               </div>

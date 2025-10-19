@@ -9,7 +9,7 @@ const Profile = () => {
   
   const stats = [
     { label: "CC Market Cap", value: "0.08 ETH", change: "+12%" },
-    { label: "Startups", value: "24", change: "+3" },
+    { label: "Content", value: "24", change: "+3" },
     { label: "Gigs", value: "47", change: "+8" },
   ];
 
@@ -171,40 +171,13 @@ const Profile = () => {
       </header>
 
       <main className="max-w-screen-xl mx-auto p-4">
-        <Tabs defaultValue="startups" className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-6">
-            <TabsTrigger value="startups">My Startups</TabsTrigger>
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 mb-6">
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="professional">Pro</TabsTrigger>
           </TabsList>
 
-          {/* Tab 1: My Startups (Self-initiated collab posts) */}
-          <TabsContent value="startups" className="space-y-4">
-            {myStartups.map((startup) => (
-              <div key={startup.id} className="glass-card rounded-2xl p-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-lg">{startup.title}</h3>
-                  <Badge variant="default">{startup.status}</Badge>
-                </div>
-                
-                <p className="text-sm text-muted-foreground">
-                  {startup.role} • {startup.openings} openings
-                </p>
-
-                <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Interest Pings</p>
-                    <p className="text-2xl font-bold text-primary">{startup.pings}</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View Pings
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </TabsContent>
-
-          {/* Tab 2: Content (Final posts) */}
+          {/* Tab 1: Content (Final posts) */}
           <TabsContent value="content">
             <div className="grid grid-cols-3 gap-1">
               {finalPosts.map((post) => (
