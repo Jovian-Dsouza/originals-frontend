@@ -189,7 +189,7 @@ const CollabFeed = () => {
                       </Avatar>
                       <div>
                         <p className="font-semibold text-base">@{collab.creator}</p>
-                        <p className="text-sm text-muted-foreground">{collab.role}</p>
+                        <p className="text-sm text-muted-foreground">Looking for {collab.role}</p>
                       </div>
                     </div>
                   </div>
