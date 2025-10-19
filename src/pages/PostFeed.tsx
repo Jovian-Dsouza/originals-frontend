@@ -1,8 +1,9 @@
 import { useState } from "react";
 import BottomNav from "@/components/BottomNav";
-import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from "lucide-react";
+import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Camera, Lightbulb, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 const PostFeed = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,6 +19,7 @@ const PostFeed = () => {
       likes: 234,
       comments: 45,
       collaborators: [],
+      contentType: "BTS" as const,
     },
     {
       id: "2",
@@ -30,6 +32,7 @@ const PostFeed = () => {
       collaborators: [
         { name: "jordan.wav", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=jordan" },
       ],
+      contentType: "Release" as const,
     },
     {
       id: "3",
@@ -47,8 +50,20 @@ const PostFeed = () => {
         { name: "alex.edit", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex" },
         { name: "jamie.vfx", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=jamie" },
       ],
+      contentType: "Thoughts" as const,
     },
   ];
+
+  const getContentTypeIcon = (type: "BTS" | "Thoughts" | "Release") => {
+    switch (type) {
+      case "BTS":
+        return Camera;
+      case "Thoughts":
+        return Lightbulb;
+      case "Release":
+        return Sparkles;
+    }
+  };
 
   const formatCreatorDisplay = (creator: string, collaborators: any[]) => {
     if (collaborators.length === 0) return creator;
@@ -83,9 +98,21 @@ const PostFeed = () => {
                   <AvatarImage src={post.avatarUrl} />
                   <AvatarFallback>{post.creator[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <span className="text-white font-semibold text-sm">
-                  {formatCreatorDisplay(post.creator, post.collaborators)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-semibold text-sm">
+                    {formatCreatorDisplay(post.creator, post.collaborators)}
+                  </span>
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs px-2 py-0.5 flex items-center gap-1"
+                  >
+                    {(() => {
+                      const Icon = getContentTypeIcon(post.contentType);
+                      return <Icon className="h-3 w-3" />;
+                    })()}
+                    {post.contentType}
+                  </Badge>
+                </div>
               </div>
               <Button 
                 variant="ghost" 
