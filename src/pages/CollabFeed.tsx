@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Filter, X, Heart, Info, Handshake } from "lucide-react";
 
 const CollabFeed = () => {
-  const [filter, setFilter] = useState<"all" | "open" | "shortlisted">("all");
+  const [filter, setFilter] = useState<"all" | "paid" | "barter" | "credits" | "contract" | "freestyle" | "remote">("all");
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const collabs = [
@@ -15,9 +15,10 @@ const CollabFeed = () => {
       title: "Neon Dream",
       creator: "Dharma",
       role: "VFX Artist",
-      share: 15,
-      payment: "0.2 ETH",
-      deadline: "Dec 1",
+      paymentType: "paid" as const,
+      credits: true,
+      workStyle: "contract" as const,
+      location: "Remote",
       status: "open" as const,
       description: "Looking for a skilled VFX artist to create stunning neon effects for our cyberpunk music video.",
       imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
@@ -27,9 +28,10 @@ const CollabFeed = () => {
       title: "Cyber Beats EP",
       creator: "Luna",
       role: "Mix Engineer",
-      share: 12,
-      payment: "$2.5k",
-      deadline: "Nov 25",
+      paymentType: "paid" as const,
+      credits: false,
+      workStyle: "freestyle" as const,
+      location: "LA",
       status: "shortlisted" as const,
       description: "Need an experienced mix engineer for our 5-track EP. Must have experience with electronic music.",
       imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
@@ -39,9 +41,10 @@ const CollabFeed = () => {
       title: "Abstract Motion",
       creator: "Koda",
       role: "3D Animator",
-      share: 18,
-      payment: "0.5 ETH",
-      deadline: "Dec 10",
+      paymentType: "barter" as const,
+      credits: true,
+      workStyle: "freestyle" as const,
+      location: "Remote",
       status: "open" as const,
       description: "Seeking a talented 3D animator to bring our abstract concepts to life with smooth, flowing animations.",
       imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
@@ -50,7 +53,13 @@ const CollabFeed = () => {
 
   const filteredCollabs = filter === "all" 
     ? collabs 
-    : collabs.filter(c => c.status === filter);
+    : collabs.filter(c => {
+        if (filter === "paid" || filter === "barter") return c.paymentType === filter;
+        if (filter === "credits") return c.credits;
+        if (filter === "contract" || filter === "freestyle") return c.workStyle === filter;
+        if (filter === "remote") return c.location.toLowerCase() === "remote";
+        return true;
+      });
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (direction === 'right') {
@@ -87,18 +96,46 @@ const CollabFeed = () => {
               All
             </Badge>
             <Badge
-              variant={filter === "open" ? "default" : "outline"}
+              variant={filter === "paid" ? "default" : "outline"}
               className="cursor-pointer px-4 py-2"
-              onClick={() => setFilter("open")}
+              onClick={() => setFilter("paid")}
             >
-              Open
+              Paid
             </Badge>
             <Badge
-              variant={filter === "shortlisted" ? "default" : "outline"}
+              variant={filter === "barter" ? "default" : "outline"}
               className="cursor-pointer px-4 py-2"
-              onClick={() => setFilter("shortlisted")}
+              onClick={() => setFilter("barter")}
             >
-              Shortlisted
+              Barter
+            </Badge>
+            <Badge
+              variant={filter === "credits" ? "default" : "outline"}
+              className="cursor-pointer px-4 py-2"
+              onClick={() => setFilter("credits")}
+            >
+              Credits
+            </Badge>
+            <Badge
+              variant={filter === "contract" ? "default" : "outline"}
+              className="cursor-pointer px-4 py-2"
+              onClick={() => setFilter("contract")}
+            >
+              Contract
+            </Badge>
+            <Badge
+              variant={filter === "freestyle" ? "default" : "outline"}
+              className="cursor-pointer px-4 py-2"
+              onClick={() => setFilter("freestyle")}
+            >
+              Freestyle
+            </Badge>
+            <Badge
+              variant={filter === "remote" ? "default" : "outline"}
+              className="cursor-pointer px-4 py-2"
+              onClick={() => setFilter("remote")}
+            >
+              Remote
             </Badge>
           </div>
         </div>
@@ -147,19 +184,21 @@ const CollabFeed = () => {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-sm">
-                    <div className="glass-card rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted-foreground">Share</p>
-                      <p className="font-bold font-mono">{collab.share}%</p>
-                    </div>
-                    <div className="glass-card rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted-foreground">Payment</p>
-                      <p className="font-bold font-mono text-xs">{collab.payment}</p>
-                    </div>
-                    <div className="glass-card rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted-foreground">Deadline</p>
-                      <p className="font-bold text-xs">{collab.deadline}</p>
-                    </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="secondary" className="capitalize">
+                      {collab.paymentType}
+                    </Badge>
+                    {collab.credits && (
+                      <Badge variant="outline" className="border-primary/50 text-primary">
+                        Credits
+                      </Badge>
+                    )}
+                    <Badge variant="outline" className="capitalize">
+                      {collab.workStyle}
+                    </Badge>
+                    <Badge variant="outline" className="border-accent/50 text-accent">
+                      {collab.location}
+                    </Badge>
                   </div>
                 </div>
               </div>

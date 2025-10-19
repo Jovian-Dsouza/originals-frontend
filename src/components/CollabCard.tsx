@@ -1,4 +1,3 @@
-import { Calendar, Coins, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -7,13 +6,14 @@ interface CollabCardProps {
   title: string;
   creator: string;
   role: string;
-  share: number;
-  payment: string;
-  deadline: string;
+  paymentType: "paid" | "barter";
+  credits: boolean;
+  workStyle: "contract" | "freestyle";
+  location: string;
   status: "open" | "shortlisted" | "signed";
 }
 
-const CollabCard = ({ title, creator, role, share, payment, deadline, status }: CollabCardProps) => {
+const CollabCard = ({ title, creator, role, paymentType, credits, workStyle, location, status }: CollabCardProps) => {
   const statusColors = {
     open: "bg-secondary/20 text-secondary",
     shortlisted: "bg-primary/20 text-primary",
@@ -33,36 +33,21 @@ const CollabCard = ({ title, creator, role, share, payment, deadline, status }: 
         </Badge>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-full bg-secondary/20 flex items-center justify-center">
-            <Coins className="h-5 w-5 text-secondary" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Share</p>
-            <p className="font-mono font-bold">{share}%</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <Zap className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Pay</p>
-            <p className="font-mono font-bold text-sm">{payment}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center">
-            <Calendar className="h-5 w-5 text-accent" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Due</p>
-            <p className="font-bold text-sm">{deadline}</p>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        <Badge variant="secondary" className="capitalize">
+          {paymentType}
+        </Badge>
+        {credits && (
+          <Badge variant="outline" className="border-primary/50 text-primary">
+            Credits
+          </Badge>
+        )}
+        <Badge variant="outline" className="capitalize">
+          {workStyle}
+        </Badge>
+        <Badge variant="outline" className="border-accent/50 text-accent">
+          {location}
+        </Badge>
       </div>
 
       <div className="flex gap-2">
