@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Filter, X, Heart, Info, Handshake } from "lucide-react";
 
 const CollabFeed = () => {
@@ -14,6 +15,7 @@ const CollabFeed = () => {
       id: "1",
       title: "Neon Dream",
       creator: "Dharma",
+      creatorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
       role: "VFX Artist",
       paymentType: "paid" as const,
       credits: true,
@@ -27,6 +29,7 @@ const CollabFeed = () => {
       id: "2",
       title: "Cyber Beats EP",
       creator: "Luna",
+      creatorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
       role: "Mix Engineer",
       paymentType: "paid" as const,
       credits: false,
@@ -40,6 +43,7 @@ const CollabFeed = () => {
       id: "3",
       title: "Abstract Motion",
       creator: "Koda",
+      creatorAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100",
       role: "3D Animator",
       paymentType: "barter" as const,
       credits: true,
@@ -174,15 +178,24 @@ const CollabFeed = () => {
 
                 {/* Card Content */}
                 <div className="p-6 space-y-4">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-2">{collab.role}</h2>
-                    <p className="text-muted-foreground mb-2">
-                      {collab.title} • by @{collab.creator}
-                    </p>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {collab.description}
-                    </p>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Avatar className="h-14 w-14 border-2 border-primary/30">
+                      <AvatarImage src={collab.creatorAvatar} alt={collab.creator} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg">
+                        {collab.creator.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h2 className="text-2xl font-bold">@{collab.creator}</h2>
+                      <p className="text-muted-foreground">
+                        {collab.role} • {collab.title}
+                      </p>
+                    </div>
                   </div>
+
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {collab.description}
+                  </p>
 
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary" className="capitalize">

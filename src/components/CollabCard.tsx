@@ -1,10 +1,12 @@
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface CollabCardProps {
   id: string;
   title: string;
   creator: string;
+  creatorAvatar?: string;
   role: string;
   paymentType: "paid" | "barter";
   credits: boolean;
@@ -13,7 +15,7 @@ interface CollabCardProps {
   status: "open" | "shortlisted" | "signed";
 }
 
-const CollabCard = ({ title, creator, role, paymentType, credits, workStyle, location, status }: CollabCardProps) => {
+const CollabCard = ({ title, creator, creatorAvatar, role, paymentType, credits, workStyle, location, status }: CollabCardProps) => {
   const statusColors = {
     open: "bg-secondary/20 text-secondary",
     shortlisted: "bg-primary/20 text-primary",
@@ -23,10 +25,17 @@ const CollabCard = ({ title, creator, role, paymentType, credits, workStyle, loc
   return (
     <div className="glass-card rounded-2xl p-6 space-y-4 hover:border-primary/50 smooth-transition animate-fade-in">
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <h3 className="font-bold text-xl">{role}</h3>
-          <p className="text-sm text-muted-foreground">for "{title}"</p>
-          <p className="text-xs text-muted-foreground">by @{creator}</p>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-12 w-12 border-2 border-primary/20">
+            <AvatarImage src={creatorAvatar} alt={creator} />
+            <AvatarFallback className="bg-primary/10 text-primary font-bold">
+              {creator.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-0.5">
+            <h3 className="font-bold text-xl">@{creator}</h3>
+            <p className="text-sm text-muted-foreground">{role} • "{title}"</p>
+          </div>
         </div>
         <Badge className={statusColors[status]}>
           {status}
