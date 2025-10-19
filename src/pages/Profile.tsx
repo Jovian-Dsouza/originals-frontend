@@ -79,7 +79,10 @@ const Profile = () => {
       project: "Urban Soundscape",
       posterName: "Alex Chen",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      posterType: "Indie Creator",
       type: "Part-time",
+      duration: "Mar 2024 - Present",
+      description: "Creating immersive soundscapes for urban documentary series",
       isSelfInitiated: false,
     },
     {
@@ -87,15 +90,21 @@ const Profile = () => {
       project: "Digital Dreams",
       posterName: "Jordan Blake",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      posterType: "Organization",
       type: "One-time",
+      duration: "Feb 2024 - Present",
+      description: "Animation work for branded content campaign",
       isSelfInitiated: false,
     },
     {
       id: "3",
       project: "Neon Empire",
-      posterName: "Self",
+      posterName: "Dharma (Self)",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
+      posterType: "Self-Initiated",
       type: "Full-time",
+      duration: "Jan 2024 - Present",
+      description: "Cyberpunk-themed short film production",
       isSelfInitiated: true,
     },
   ];
@@ -107,7 +116,10 @@ const Profile = () => {
       project: "Retro Vibes",
       posterName: "Taylor Swift",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
+      posterType: "Indie Creator",
       type: "Full-time",
+      duration: "Oct 2023 - Dec 2023",
+      description: "VFX work for music video production",
       isSelfInitiated: false,
     },
     {
@@ -115,15 +127,21 @@ const Profile = () => {
       project: "Night City",
       posterName: "Morgan Lee",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan",
+      posterType: "Organization",
       type: "Hourly",
+      duration: "Sep 2023 - Nov 2023",
+      description: "Compositing for commercial advertising campaign",
       isSelfInitiated: false,
     },
     {
       id: "3",
       project: "Cosmic Dreams",
-      posterName: "Self",
+      posterName: "Dharma (Self)",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
+      posterType: "Self-Initiated",
       type: "Part-time",
+      duration: "Jul 2023 - Sep 2023",
+      description: "Experimental 3D art series",
       isSelfInitiated: true,
     },
   ];
@@ -248,22 +266,25 @@ const Profile = () => {
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
                 Ongoing Collabs
               </h3>
-              <div className="glass-card rounded-2xl p-6 space-y-3">
+              <div className="glass-card rounded-2xl p-6 space-y-6">
                 {ongoingCollabs.map((collab) => (
-                  <div key={collab.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm">{collab.project}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {collab.isSelfInitiated ? "by self" : `by ${collab.posterName}`}
-                      </p>
-                      <div className="flex gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
+                  <div key={collab.id} className="flex gap-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
+                    {/* Left side: Creator info */}
+                    <div className="flex-shrink-0 w-24">
+                      <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
+                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
                       </div>
+                      <p className="text-xs font-bold mt-2 leading-tight">{collab.posterName}</p>
+                      <p className="text-xs text-muted-foreground leading-tight">{collab.posterType}</p>
                     </div>
-                    <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+                    
+                    {/* Right side: Project details */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-base mb-1">{collab.project}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{collab.duration}</p>
+                      <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{collab.description}</p>
+                      <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -274,22 +295,25 @@ const Profile = () => {
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
                 Completed Collabs
               </h3>
-              <div className="glass-card rounded-2xl p-6 space-y-3">
+              <div className="glass-card rounded-2xl p-6 space-y-6">
                 {completedCollabs.map((collab) => (
-                  <div key={collab.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm">{collab.project}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {collab.isSelfInitiated ? "by self" : `by ${collab.posterName}`}
-                      </p>
-                      <div className="flex gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
+                  <div key={collab.id} className="flex gap-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
+                    {/* Left side: Creator info */}
+                    <div className="flex-shrink-0 w-24">
+                      <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
+                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
                       </div>
+                      <p className="text-xs font-bold mt-2 leading-tight">{collab.posterName}</p>
+                      <p className="text-xs text-muted-foreground leading-tight">{collab.posterType}</p>
                     </div>
-                    <CheckCircle2 className="h-5 w-5 text-secondary flex-shrink-0" />
+                    
+                    {/* Right side: Project details */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-base mb-1">{collab.project}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{collab.duration}</p>
+                      <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{collab.description}</p>
+                      <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
+                    </div>
                   </div>
                 ))}
               </div>
