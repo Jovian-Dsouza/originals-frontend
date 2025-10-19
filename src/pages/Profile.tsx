@@ -72,53 +72,59 @@ const Profile = () => {
     },
   ];
 
-  // Ongoing collabs (Gigs - joined other people's collabs)
-  const ongoingGigs = [
+  // Ongoing collabs
+  const ongoingCollabs = [
     {
       id: "1",
       project: "Urban Soundscape",
       posterName: "Alex Chen",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-      role: "Sound Designer",
       type: "Part-time",
-      status: "In Progress",
+      isSelfInitiated: false,
     },
     {
       id: "2",
       project: "Digital Dreams",
       posterName: "Jordan Blake",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
-      role: "Animator",
       type: "One-time",
-      status: "In Progress",
+      isSelfInitiated: false,
+    },
+    {
+      id: "3",
+      project: "Neon Empire",
+      posterName: "Self",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
+      type: "Full-time",
+      isSelfInitiated: true,
     },
   ];
 
-  // Completed collabs (Gigs - finished)
-  const completedGigs = [
+  // Completed collabs
+  const completedCollabs = [
     {
       id: "1",
       project: "Retro Vibes",
       posterName: "Taylor Swift",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
-      role: "VFX Artist",
       type: "Full-time",
+      isSelfInitiated: false,
     },
     {
       id: "2",
       project: "Night City",
       posterName: "Morgan Lee",
       posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan",
-      role: "Compositor",
       type: "Hourly",
+      isSelfInitiated: false,
     },
     {
       id: "3",
       project: "Cosmic Dreams",
-      posterName: "Casey Johnson",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey",
-      role: "3D Artist",
+      posterName: "Self",
+      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
       type: "Part-time",
+      isSelfInitiated: true,
     },
   ];
 
@@ -237,23 +243,24 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Ongoing Gigs */}
+            {/* Ongoing Collabs */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Ongoing Gigs
+                Ongoing Collabs
               </h3>
               <div className="glass-card rounded-2xl p-6 space-y-3">
-                {ongoingGigs.map((gig) => (
-                  <div key={gig.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                {ongoingCollabs.map((collab) => (
+                  <div key={collab.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
                     <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <img src={gig.posterAvatar} alt={gig.posterName} className="w-full h-full" />
+                      <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm">{gig.project}</p>
-                      <p className="text-xs text-muted-foreground">by {gig.posterName}</p>
+                      <p className="font-bold text-sm">{collab.project}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {collab.isSelfInitiated ? "by self" : `by ${collab.posterName}`}
+                      </p>
                       <div className="flex gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs">{gig.role}</Badge>
-                        <Badge variant="secondary" className="text-xs">{gig.type}</Badge>
+                        <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
                       </div>
                     </div>
                     <Clock className="h-5 w-5 text-primary flex-shrink-0" />
@@ -262,23 +269,24 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Completed Gigs */}
+            {/* Completed Collabs */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Completed Gigs
+                Completed Collabs
               </h3>
               <div className="glass-card rounded-2xl p-6 space-y-3">
-                {completedGigs.map((gig) => (
-                  <div key={gig.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                {completedCollabs.map((collab) => (
+                  <div key={collab.id} className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
                     <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <img src={gig.posterAvatar} alt={gig.posterName} className="w-full h-full" />
+                      <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm">{gig.project}</p>
-                      <p className="text-xs text-muted-foreground">by {gig.posterName}</p>
+                      <p className="font-bold text-sm">{collab.project}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {collab.isSelfInitiated ? "by self" : `by ${collab.posterName}`}
+                      </p>
                       <div className="flex gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs">{gig.role}</Badge>
-                        <Badge variant="secondary" className="text-xs">{gig.type}</Badge>
+                        <Badge variant="secondary" className="text-xs">{collab.type}</Badge>
                       </div>
                     </div>
                     <CheckCircle2 className="h-5 w-5 text-secondary flex-shrink-0" />
