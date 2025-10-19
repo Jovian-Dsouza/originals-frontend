@@ -178,18 +178,19 @@ const CollabFeed = () => {
 
                 {/* Card Content */}
                 <div className="p-6 space-y-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Avatar className="h-14 w-14 border-2 border-primary/30">
-                      <AvatarImage src={collab.creatorAvatar} alt={collab.creator} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg">
-                        {collab.creator.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h2 className="text-2xl font-bold">@{collab.creator}</h2>
-                      <p className="text-muted-foreground">
-                        {collab.role} • {collab.title}
-                      </p>
+                  <div>
+                    <h2 className="text-3xl font-bold mb-3">{collab.title}</h2>
+                    <div className="flex items-center gap-3 mb-3">
+                      <Avatar className="h-10 w-10 border-2 border-primary/30">
+                        <AvatarImage src={collab.creatorAvatar} alt={collab.creator} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                          {collab.creator.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold text-base">@{collab.creator}</p>
+                        <p className="text-sm text-muted-foreground">{collab.role}</p>
+                      </div>
                     </div>
                   </div>
 
