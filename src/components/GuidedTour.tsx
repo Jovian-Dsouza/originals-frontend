@@ -32,7 +32,7 @@ const tourSteps: TourStep[] = [
     body: "Drop your next project idea, invite collaborators, and set your own terms.\nEvery post becomes a PostCoin — a living creative contract.",
     cta: "Create Now →",
     position: "bottom",
-    targetRoute: "/create",
+    targetRoute: "/collab",
   },
   {
     title: "Your Creative Proof.",
