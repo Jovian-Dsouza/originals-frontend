@@ -1,8 +1,8 @@
 import { useState } from "react";
 import BottomNav from "@/components/BottomNav";
-import PostCard from "@/components/PostCard";
-import { Search, Heart, MessageCircle, Share2 } from "lucide-react";
+import { Search, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const PostFeed = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,60 +11,49 @@ const PostFeed = () => {
   const posts = [
     {
       id: "1",
-      title: "Neon Dream VFX",
-      creator: "Dharma",
+      creator: "dharma.creates",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=dharma",
       imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
+      description: "New VFX breakdown coming soon 🔥✨",
       likes: 234,
       comments: 45,
-      collaborators: [
-        { name: "Alex", role: "VFX Artist", share: 15 },
-        { name: "Sarah", role: "Sound Design", share: 12 },
-        { name: "Mike", role: "Color Grading", share: 8 },
-      ],
+      collaborators: [],
     },
     {
       id: "2",
-      title: "Cyber Beats EP",
-      creator: "Luna",
+      creator: "luna.beats",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=luna",
       imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
+      description: "Studio sessions with @jordan.wav 🎵",
       likes: 567,
       comments: 89,
       collaborators: [
-        { name: "Jordan", role: "Producer", share: 20 },
-        { name: "Casey", role: "Mix Engineer", share: 15 },
+        { name: "jordan.wav", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=jordan" },
       ],
     },
     {
       id: "3",
-      title: "Abstract Motion",
-      creator: "Koda",
+      creator: "koda.motion",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=koda",
       imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
+      description: "Big team effort on this one 💫 shoutout to everyone involved",
       likes: 892,
       comments: 123,
       collaborators: [
-        { name: "River", role: "Animator", share: 18 },
-        { name: "Sage", role: "Compositor", share: 12 },
-        { name: "Taylor", role: "Sound Designer", share: 10 },
-        { name: "Morgan", role: "Colorist", share: 8 },
-        { name: "Alex", role: "Editor", share: 7 },
-        { name: "Jamie", role: "VFX", share: 6 },
-        { name: "Chris", role: "Music", share: 5 },
-        { name: "Pat", role: "Lighting", share: 4 },
-        { name: "Sam", role: "Rigging", share: 3 },
-        { name: "Drew", role: "Textures", share: 2 },
-        { name: "Quinn", role: "Modeling", share: 2 },
+        { name: "river.anim", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=river" },
+        { name: "sage.comp", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=sage" },
+        { name: "taylor.sound", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=taylor" },
+        { name: "morgan.color", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=morgan" },
+        { name: "alex.edit", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex" },
+        { name: "jamie.vfx", avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=jamie" },
       ],
     },
   ];
 
-  const formatCollaborators = (creator: string, collaborators: any[]) => {
-    const majorCollabs = collaborators.filter(c => c.share > 10);
-    
-    if (majorCollabs.length === 0) return creator;
-    if (majorCollabs.length <= 3) {
-      return `${creator} and ${majorCollabs.map(c => c.name).join(", ")}`;
-    }
-    return `${creator} and ${majorCollabs.length} others`;
+  const formatCreatorDisplay = (creator: string, collaborators: any[]) => {
+    if (collaborators.length === 0) return creator;
+    if (collaborators.length === 1) return `${creator} & ${collaborators[0].name}`;
+    return `${creator} with ${collaborators.length} others`;
   };
 
   return (
@@ -87,47 +76,81 @@ const PostFeed = () => {
               <div className="absolute inset-0 bg-black/40" />
             </div>
 
-            {/* Content Overlay */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6 pb-32 z-10">
-              <h2 className="text-3xl font-bold text-white mb-2">
-                {post.title}
-              </h2>
-              <p className="text-white/90 mb-4">
-                {formatCollaborators(post.creator, post.collaborators)}
-              </p>
-              
-              <div className="flex items-center gap-6 text-white">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 text-white hover:text-white hover:bg-white/20"
-                >
-                  <Heart className="h-5 w-5" />
-                  <span className="font-mono">{post.likes}</span>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 text-white hover:text-white hover:bg-white/20"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="font-mono">{post.comments}</span>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 text-white hover:text-white hover:bg-white/20"
-                >
-                  <Share2 className="h-5 w-5" />
-                </Button>
+            {/* Top Creator Info */}
+            <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-10 w-10 border-2 border-white">
+                  <AvatarImage src={post.avatarUrl} />
+                  <AvatarFallback>{post.creator[0].toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="text-white font-semibold text-sm">
+                  {formatCreatorDisplay(post.creator, post.collaborators)}
+                </span>
               </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/20"
+              >
+                <MoreHorizontal className="h-5 w-5" />
+              </Button>
             </div>
 
-            {/* Side Actions */}
-            <div className="absolute right-4 bottom-32 flex flex-col gap-6 z-10">
-              <div className="flex flex-col items-center gap-2">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow" />
-                <span className="text-xs text-white">@{post.creator}</span>
+            {/* Bottom Content */}
+            <div className="absolute bottom-20 left-0 right-0 z-10 px-4">
+              {/* Description */}
+              <div className="mb-4">
+                <p className="text-white text-sm">
+                  <span className="font-semibold">{post.creator}</span> {post.description}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white hover:bg-white/20 h-8 w-8"
+                  >
+                    <Heart className="h-6 w-6" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white hover:bg-white/20 h-8 w-8"
+                  >
+                    <MessageCircle className="h-6 w-6" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white hover:bg-white/20 h-8 w-8"
+                  >
+                    <Share2 className="h-6 w-6" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Button 
+                    variant="default"
+                    size="sm"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6"
+                  >
+                    Buy
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white hover:bg-white/20 h-8 w-8"
+                  >
+                    <Bookmark className="h-6 w-6" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Likes Count */}
+              <div className="mt-2">
+                <p className="text-white text-xs font-semibold">{post.likes} likes</p>
               </div>
             </div>
           </div>
@@ -135,11 +158,8 @@ const PostFeed = () => {
       </div>
 
       {/* Top Header */}
-      <div className="absolute top-0 left-0 right-0 z-20 p-4 flex items-center justify-between bg-gradient-to-b from-black/50 to-transparent">
-        <h1 className="text-2xl font-bold text-white">PostFeed</h1>
-        <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-          <Search className="h-5 w-5" />
-        </Button>
+      <div className="absolute top-0 left-0 right-0 z-20 p-4 flex items-center justify-center bg-gradient-to-b from-black/50 to-transparent">
+        <h1 className="text-xl font-bold text-white">Originals</h1>
       </div>
 
       <BottomNav />
