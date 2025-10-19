@@ -5,14 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { ArrowLeft, Upload, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Collaborator {
   role: string;
-  payType: "hourly" | "daily" | "fixed";
-  share: number;
-  deadline: string;
+  creatorType: "indie" | "org" | "brand" | "";
+  credits: number;
+  compensationType: "paid" | "barter" | "both" | "";
+  timeCommitment: "ongoing" | "one-time" | "";
+  jobDescription: string;
 }
 
 const CreatePost = () => {
@@ -25,7 +29,14 @@ const CreatePost = () => {
   const addCollaborator = () => {
     setCollaborators([
       ...collaborators,
-      { role: "", payType: "fixed", share: 0, deadline: "" },
+      { 
+        role: "", 
+        creatorType: "", 
+        credits: 0, 
+        compensationType: "", 
+        timeCommitment: "",
+        jobDescription: ""
+      },
     ]);
   };
 
@@ -39,11 +50,11 @@ const CreatePost = () => {
     setCollaborators(updated);
   };
 
-  const totalShare = collaborators.reduce((sum, c) => sum + (c.share || 0), 0);
+  const totalCredits = collaborators.reduce((sum, c) => sum + (c.credits || 0), 0);
 
   const handlePublish = () => {
-    if (totalShare !== 100) {
-      toast.error("Total share must equal 100%");
+    if (totalCredits !== 100) {
+      toast.error("Total credits must equal 100%");
       return;
     }
     toast.success("PostCoin minted successfully!");
@@ -129,24 +140,24 @@ const CreatePost = () => {
                 <div>
                   <h2 className="font-bold text-lg">Invite Collaborators</h2>
                   <p className="text-sm text-muted-foreground">
-                    Add roles and split shares
+                    Define roles and split credits
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Total Share</p>
+                  <p className="text-sm text-muted-foreground">Total Credits</p>
                   <p className={`text-2xl font-mono font-bold ${
-                    totalShare === 100 ? "text-secondary" : "text-destructive"
+                    totalCredits === 100 ? "text-secondary" : "text-destructive"
                   }`}>
-                    {totalShare}%
+                    {totalCredits}%
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 {collaborators.map((collab, index) => (
-                  <div key={index} className="glass-card rounded-xl p-4 space-y-3">
+                  <div key={index} className="glass-card rounded-xl p-5 space-y-4">
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline">Role {index + 1}</Badge>
+                      <Badge variant="outline">Collaborator {index + 1}</Badge>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -156,39 +167,92 @@ const CreatePost = () => {
                       </Button>
                     </div>
 
-                    <Input
-                      placeholder="Role (e.g., VFX Artist)"
-                      value={collab.role}
-                      onChange={(e) => updateCollaborator(index, "role", e.target.value)}
-                      className="bg-muted/50 border-white/10"
-                    />
+                    <div>
+                      <Label className="text-xs mb-2">Role</Label>
+                      <Input
+                        placeholder="e.g., VFX Artist, Sound Designer"
+                        value={collab.role}
+                        onChange={(e) => updateCollaborator(index, "role", e.target.value)}
+                        className="bg-muted/50 border-white/10"
+                      />
+                    </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">
-                          Share %
-                        </label>
+                        <Label className="text-xs mb-2">Creator Type</Label>
+                        <Select
+                          value={collab.creatorType}
+                          onValueChange={(value) => updateCollaborator(index, "creatorType", value)}
+                        >
+                          <SelectTrigger className="bg-muted/50 border-white/10">
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="indie">Indie</SelectItem>
+                            <SelectItem value="org">Organization</SelectItem>
+                            <SelectItem value="brand">Brand</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs mb-2">Credits %</Label>
                         <Input
                           type="number"
-                          placeholder="15"
-                          value={collab.share || ""}
+                          placeholder="25"
+                          value={collab.credits || ""}
                           onChange={(e) =>
-                            updateCollaborator(index, "share", parseInt(e.target.value) || 0)
+                            updateCollaborator(index, "credits", parseInt(e.target.value) || 0)
                           }
                           className="bg-muted/50 border-white/10"
                         />
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">
-                          Deadline
-                        </label>
-                        <Input
-                          type="date"
-                          value={collab.deadline}
-                          onChange={(e) => updateCollaborator(index, "deadline", e.target.value)}
-                          className="bg-muted/50 border-white/10"
-                        />
+                        <Label className="text-xs mb-2">Compensation</Label>
+                        <Select
+                          value={collab.compensationType}
+                          onValueChange={(value) => updateCollaborator(index, "compensationType", value)}
+                        >
+                          <SelectTrigger className="bg-muted/50 border-white/10">
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="paid">Paid</SelectItem>
+                            <SelectItem value="barter">Barter</SelectItem>
+                            <SelectItem value="both">Both</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+
+                      <div>
+                        <Label className="text-xs mb-2">Time Commitment</Label>
+                        <Select
+                          value={collab.timeCommitment}
+                          onValueChange={(value) => updateCollaborator(index, "timeCommitment", value)}
+                        >
+                          <SelectTrigger className="bg-muted/50 border-white/10">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ongoing">Ongoing</SelectItem>
+                            <SelectItem value="one-time">One-Time</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs mb-2">Job Description (Optional)</Label>
+                      <Textarea
+                        placeholder="Skills, role description, requirements..."
+                        value={collab.jobDescription}
+                        onChange={(e) => updateCollaborator(index, "jobDescription", e.target.value)}
+                        className="bg-muted/50 border-white/10 resize-none min-h-[80px]"
+                        rows={3}
+                      />
                     </div>
                   </div>
                 ))}
@@ -205,7 +269,7 @@ const CreatePost = () => {
 
               <Button
                 onClick={handlePublish}
-                disabled={totalShare !== 100 || collaborators.length === 0}
+                disabled={totalCredits !== 100 || collaborators.length === 0}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
