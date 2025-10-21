@@ -23,7 +23,7 @@ const CollabFeed = () => {
       location: "Remote",
       status: "open" as const,
       description: "Seeking talented actors for negative roles in our psychological thriller short film. Must be comfortable with intense dramatic scenes.",
-      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
+      imageUrl: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800",
     },
     {
       id: "2",
