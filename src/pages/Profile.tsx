@@ -78,7 +78,7 @@ const Profile = () => {
       id: "1",
       project: "Urban Soundscape",
       posterName: "Alex Chen",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      posterAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
       posterType: "Indie Creator",
       type: "Part-time",
       duration: "Mar 2024 - Present",
@@ -89,7 +89,7 @@ const Profile = () => {
       id: "2",
       project: "Digital Dreams",
       posterName: "Jordan Blake",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      posterAvatar: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=200&h=200&fit=crop",
       posterType: "Organization",
       type: "One-time",
       duration: "Feb 2024 - Present",
@@ -100,7 +100,7 @@ const Profile = () => {
       id: "3",
       project: "Neon Empire",
       posterName: "Dharma (Self)",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
+      posterAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
       posterType: "Self-Initiated",
       type: "Full-time",
       duration: "Jan 2024 - Present",
@@ -115,7 +115,7 @@ const Profile = () => {
       id: "1",
       project: "Retro Vibes",
       posterName: "Taylor Swift",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
+      posterAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
       posterType: "Indie Creator",
       type: "Full-time",
       duration: "Oct 2023 - Dec 2023",
@@ -126,7 +126,7 @@ const Profile = () => {
       id: "2",
       project: "Night City",
       posterName: "Morgan Lee",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan",
+      posterAvatar: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=200&h=200&fit=crop",
       posterType: "Organization",
       type: "Hourly",
       duration: "Sep 2023 - Nov 2023",
@@ -137,7 +137,7 @@ const Profile = () => {
       id: "3",
       project: "Cosmic Dreams",
       posterName: "Dharma (Self)",
-      posterAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dharma",
+      posterAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
       posterType: "Self-Initiated",
       type: "Part-time",
       duration: "Jul 2023 - Sep 2023",
@@ -268,8 +268,8 @@ const Profile = () => {
                   <div key={collab.id} className="flex gap-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
                     {/* Left side: Creator info */}
                     <div className="flex-shrink-0 w-24">
-                      <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
+                      <div className={`h-16 w-16 ${collab.posterType === 'Organization' ? 'rounded-lg' : 'rounded-full'} bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden border-2 border-primary/20`}>
+                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full object-cover" />
                       </div>
                       <p className="text-xs font-bold mt-2 leading-tight">{collab.posterName}</p>
                       <p className="text-xs text-muted-foreground leading-tight">{collab.posterType}</p>
@@ -297,8 +297,8 @@ const Profile = () => {
                   <div key={collab.id} className="flex gap-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
                     {/* Left side: Creator info */}
                     <div className="flex-shrink-0 w-24">
-                      <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full" />
+                      <div className={`h-16 w-16 ${collab.posterType === 'Organization' ? 'rounded-lg' : 'rounded-full'} bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden border-2 border-primary/20`}>
+                        <img src={collab.posterAvatar} alt={collab.posterName} className="w-full h-full object-cover" />
                       </div>
                       <p className="text-xs font-bold mt-2 leading-tight">{collab.posterName}</p>
                       <p className="text-xs text-muted-foreground leading-tight">{collab.posterType}</p>
