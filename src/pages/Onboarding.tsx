@@ -322,23 +322,23 @@ const Onboarding = () => {
                 <p className="text-sm text-muted-foreground">Select your creative domains to establish your profile.</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                 {creativeDomainOptions.map((domain) => {
                   const isSelected = creativeDomains.includes(domain.id);
                   return (
                     <button
                       key={domain.id}
                       onClick={() => toggleDomain(domain.id)}
-                      className={`group p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 relative overflow-hidden ${
+                      className={`group p-3 md:p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 relative overflow-hidden ${
                         isSelected
                           ? "border-primary bg-primary/10 glow-primary"
                           : "border-white/10 hover:border-primary/30"
                       }`}
                     >
                       <div className="relative z-10">
-                        <HoloIcon icon={domain.icon as any} size={36} className="mx-auto mb-2" />
-                        <h3 className="font-bold text-sm mb-1 text-center">{domain.label}</h3>
-                        <p className="text-xs text-muted-foreground text-center">{domain.subtitle}</p>
+                        <HoloIcon icon={domain.icon as any} size={32} className="mx-auto mb-2" />
+                        <h3 className="font-bold text-xs md:text-sm mb-1 text-center">{domain.label}</h3>
+                        <p className="text-[10px] md:text-xs text-muted-foreground text-center">{domain.subtitle}</p>
                       </div>
                     </button>
                   );
