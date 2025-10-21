@@ -329,15 +329,15 @@ const Onboarding = () => {
                     <button
                       key={domain.id}
                       onClick={() => toggleDomain(domain.id)}
-                      className={`group p-3 md:p-4 rounded-xl border-2 smooth-transition text-left hover:scale-105 relative overflow-hidden ${
+                      className={`group p-3 md:p-4 rounded-xl border-2 smooth-transition hover:scale-105 relative overflow-hidden flex flex-col items-center justify-center min-h-[120px] ${
                         isSelected
                           ? "border-primary bg-primary/10 glow-primary"
                           : "border-white/10 hover:border-primary/30"
                       }`}
                     >
-                      <div className="relative z-10">
-                        <HoloIcon icon={domain.icon as any} size={32} className="mx-auto mb-2" />
-                        <h3 className="font-bold text-xs md:text-sm mb-1 text-center">{domain.label}</h3>
+                      <div className="relative z-10 flex flex-col items-center justify-center gap-2">
+                        <HoloIcon icon={domain.icon as any} size={32} />
+                        <h3 className="font-bold text-xs md:text-sm text-center">{domain.label}</h3>
                         <p className="text-[10px] md:text-xs text-muted-foreground text-center">{domain.subtitle}</p>
                       </div>
                     </button>

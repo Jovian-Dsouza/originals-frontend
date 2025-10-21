@@ -13,16 +13,16 @@ const CollabFeed = () => {
   const collabs = [
     {
       id: "1",
-      title: "Neon Dream",
+      title: "Dark short film",
       creator: "Dharma",
       creatorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
-      role: "VFX Artist",
+      role: "Actors in negative role",
       paymentType: "paid" as const,
       credits: true,
       workStyle: "contract" as const,
       location: "Remote",
       status: "open" as const,
-      description: "Looking for a skilled VFX artist to create stunning neon effects for our cyberpunk music video.",
+      description: "Seeking talented actors for negative roles in our psychological thriller short film. Must be comfortable with intense dramatic scenes.",
       imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
     },
     {
