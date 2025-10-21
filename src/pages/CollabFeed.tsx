@@ -91,7 +91,7 @@ const CollabFeed = () => {
             </Button>
           </div>
           
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <Badge
               variant={filter === "all" ? "default" : "outline"}
               className="cursor-pointer px-4 py-2"
@@ -253,8 +253,9 @@ const CollabFeed = () => {
       {/* Floating Create Collab Button */}
       <Link to="/create-collab" className="fixed bottom-24 right-4 z-30">
         <Button
-          size="lg"
-          className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
+          size="icon"
+          variant="ghost"
+          className="h-14 w-14 rounded-full bg-gradient-to-br from-zinc-400 via-zinc-300 to-zinc-500 hover:from-zinc-300 hover:via-zinc-200 hover:to-zinc-400 text-zinc-900 shadow-[0_8px_16px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.2)] hover:scale-105 smooth-transition border border-zinc-200/50"
         >
           <Handshake className="h-5 w-5" />
         </Button>

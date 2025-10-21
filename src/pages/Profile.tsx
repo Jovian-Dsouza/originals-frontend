@@ -8,7 +8,7 @@ const Profile = () => {
   const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
   
   const stats = [
-    { label: "CC Market Cap", value: "0.08 ETH", change: "+12%" },
+    { label: "CC Market Cap", value: "250k $", change: "+12%" },
     { label: "Content", value: "24", change: "+3" },
     { label: "Gigs", value: "47", change: "+8" },
   ];
@@ -203,7 +203,7 @@ const Profile = () => {
 
           {/* Tab 1: Content (Final posts) */}
           <TabsContent value="content">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="grid grid-cols-3 gap-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {finalPosts.map((post) => (
                 <div key={post.id} className="aspect-square relative group cursor-pointer">
                   <img

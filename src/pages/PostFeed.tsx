@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { MessageCircle, Share2, MoreHorizontal, Camera, Lightbulb, Sparkles, Plus } from "lucide-react";
+import filmStudio from "@/assets/demo/film-studio.jpg";
+import musicStudio from "@/assets/demo/music-studio.jpg";
+import comedyClub from "@/assets/demo/comedy-club.jpg";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +18,7 @@ const PostFeed = () => {
       id: "1",
       creator: "dharma.creates",
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=dharma",
-      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
+      imageUrl: filmStudio,
       description: "New VFX breakdown coming soon 🔥✨",
       marketCap: 234,
       marketCapChange: "up",
@@ -27,7 +30,7 @@ const PostFeed = () => {
       id: "2",
       creator: "luna.beats",
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=luna",
-      imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
+      imageUrl: musicStudio,
       description: "Studio sessions with @jordan.wav 🎵",
       marketCap: 567,
       marketCapChange: "down",
@@ -41,7 +44,7 @@ const PostFeed = () => {
       id: "3",
       creator: "koda.motion",
       avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=koda",
-      imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
+      imageUrl: comedyClub,
       description: "Big team effort on this one 💫 shoutout to everyone involved",
       marketCap: 892,
       marketCapChange: "up",
@@ -96,7 +99,7 @@ const PostFeed = () => {
             </div>
 
             {/* Top Creator Info */}
-            <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+            <div className="absolute top-16 left-4 right-4 z-10 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Avatar className="h-10 w-10 border-2 border-white">
                   <AvatarImage src={post.avatarUrl} />
@@ -178,8 +181,9 @@ const PostFeed = () => {
       {/* Floating Create Button */}
       <Link to="/create-content" className="fixed bottom-28 right-4 z-30">
         <Button
-          size="lg"
-          className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 smooth-transition shadow-lg glow-primary"
+          size="icon"
+          variant="ghost"
+          className="h-14 w-14 rounded-full bg-gradient-to-br from-zinc-400 via-zinc-300 to-zinc-500 hover:from-zinc-300 hover:via-zinc-200 hover:to-zinc-400 text-zinc-900 shadow-[0_8px_16px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.2)] hover:scale-105 smooth-transition border border-zinc-200/50"
         >
           <Plus className="h-6 w-6" />
         </Button>
