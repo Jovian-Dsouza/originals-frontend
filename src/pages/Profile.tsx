@@ -4,11 +4,46 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Verified, CheckCircle2, Clock, LogOut, Copy } from "lucide-react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useEffect } from "react";
 
 const Profile = () => {
   const { logout, user } = usePrivy();
   const { wallets } = useWallets();
   const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
+
+  useEffect(() => {
+    console.log('Privy User:', user);
+    console.log('Privy Wallets:', wallets);
+    
+    // Print wallet addresses specifically
+    if (wallets && wallets.length > 0) {
+      console.log('Wallet Addresses:');
+      wallets.forEach((wallet, index) => {
+        console.log(`Wallet ${index + 1}:`, {
+          address: wallet.address,
+          walletClientType: wallet.walletClientType,
+          chainId: wallet.chainId
+        });
+      });
+    } else {
+      console.log('No wallets connected');
+      // If user is authenticated via email but has no wallets, try to create one
+      if (user?.email?.address && !user?.wallet?.address) {
+        console.log('User authenticated via email but no wallet found. Embedded wallet should be created automatically.');
+      }
+    }
+    
+    // Print email if available
+    if (user?.email?.address) {
+      console.log('Email Address:', user.email.address);
+    }
+    
+    // Print wallet info from user object
+    if (user?.wallet?.address) {
+      console.log('User Wallet Address:', user.wallet.address);
+    }
+  }, [user, wallets]);
+
 
   const handleLogout = async () => {
     try {

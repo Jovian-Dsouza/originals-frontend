@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivy, useWallets, useCrossAppAccounts } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,7 @@ const Onboarding = () => {
     orgName: "",
     orgType: "",
   });
+  const { loginWithCrossAppAccount } = useCrossAppAccounts();
 
   const creativeDomainOptions = [
     { id: "indie", label: "Indie Creator", subtitle: "Streamers, Meme-makers", icon: Gamepad2 },
@@ -49,12 +50,10 @@ const Onboarding = () => {
   // Handle authentication state changes
   useEffect(() => {
     if (ready && authenticated && user) {
-      // User is authenticated, advance to appropriate page
-      if (page === 2) {
-        setPage(3);
-      }
+      // User is already authenticated, skip login and go to feed
+      navigate("/feed");
     }
-  }, [ready, authenticated, user, page]);
+  }, [ready, authenticated, user, navigate]);
 
   const handleWalletLogin = async () => {
     try {
@@ -71,6 +70,34 @@ const Onboarding = () => {
       console.error('Email login failed:', error);
     }
   };
+
+  const handleZoraLogin = async () => {
+    try {
+      const appId: String = import.meta.env.VITE_PRIVY_APP_ID;
+      console.log('Zora login started', appId);
+      await loginWithCrossAppAccount({ appId: "clpgf04wn04hnkw0fv1m11mnb" });
+      console.log('Zora login completed');
+    } catch (error) {
+      console.error('Zora login failed:', error);
+    }
+  };
+
+  // Show loading while Privy is initializing
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="h-12 w-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is already authenticated, don't show onboarding
+  if (authenticated && user) {
+    return null; // This will be handled by the useEffect redirect
+  }
 
   const handleComplete = () => {
     // Set flag to trigger guided tour
@@ -145,14 +172,13 @@ const Onboarding = () => {
               <div className="space-y-3 pt-4 relative">
                 <Button
                   onClick={() => {
-                    setLoginMethod("email");
-                    handleEmailLogin();
+                    handleZoraLogin();
                   }}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                   size="lg"
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
-                  Login with Email
+                  Login with Zora
                 </Button>
                 <Button
                   onClick={() => {
