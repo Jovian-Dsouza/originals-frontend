@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,10 @@ import { Filter, X, Heart, Info, Handshake } from "lucide-react";
 const CollabFeed = () => {
   const [filter, setFilter] = useState<"all" | "paid" | "barter" | "credits" | "contract" | "freestyle" | "remote">("all");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [cardOffset, setCardOffset] = useState(0);
+  const [showInfo, setShowInfo] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const collabs = [
     {
@@ -66,15 +70,69 @@ const CollabFeed = () => {
       });
 
   const handleSwipe = (direction: 'left' | 'right') => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    
     if (direction === 'right') {
       // Ping/Like action
       console.log('Pinged:', filteredCollabs[currentIndex].title);
-    }
-    if (currentIndex < filteredCollabs.length - 1) {
-      setCurrentIndex(currentIndex + 1);
     } else {
-      setCurrentIndex(0);
+      // Pass action
+      console.log('Passed:', filteredCollabs[currentIndex].title);
     }
+    
+    // Animate card out
+    setCardOffset(direction === 'left' ? -400 : 400);
+    
+    setTimeout(() => {
+      if (currentIndex < filteredCollabs.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+      }
+      setCardOffset(0);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const handleInfoToggle = () => {
+    setShowInfo(!showInfo);
+  };
+
+  // Touch gesture handling
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const startX = touch.clientX;
+    const startY = touch.clientY;
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+      
+      // Only handle horizontal swipes
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+        setCardOffset(deltaX * 0.5); // Scale down the movement for preview
+      }
+    };
+    
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - startX;
+      
+      if (Math.abs(deltaX) > 50) {
+        handleSwipe(deltaX > 0 ? 'right' : 'left');
+      } else {
+        setCardOffset(0);
+      }
+      
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
   const currentCollab = filteredCollabs[currentIndex];
@@ -152,12 +210,16 @@ const CollabFeed = () => {
             {filteredCollabs.slice(currentIndex, currentIndex + 2).map((collab, index) => (
               <div
                 key={collab.id}
+                ref={index === 0 ? cardRef : undefined}
                 className={`absolute inset-0 glass-card rounded-3xl overflow-hidden transition-all duration-300 ${
                   index === 0 ? 'z-20 scale-100' : 'z-10 scale-95 opacity-50'
                 }`}
                 style={{
-                  transform: index === 0 ? 'translateY(0) rotate(0deg)' : 'translateY(10px) scale(0.95)',
+                  transform: index === 0 
+                    ? `translateX(${cardOffset}px) translateY(0) rotate(${cardOffset * 0.1}deg)` 
+                    : 'translateY(10px) scale(0.95)',
                 }}
+                onTouchStart={index === 0 ? handleTouchStart : undefined}
               >
                 {/* Card Image */}
                 <div className="relative h-3/5">
@@ -215,32 +277,47 @@ const CollabFeed = () => {
               </div>
             ))}
 
-            {/* Action Buttons */}
-            <div className="absolute -bottom-20 left-0 right-0 flex items-center justify-center gap-6 z-30">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-16 w-16 rounded-full border-destructive text-destructive hover:bg-destructive hover:text-white"
-                onClick={() => handleSwipe('left')}
-              >
-                <X className="h-8 w-8" />
-              </Button>
-              
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 w-12 rounded-full border-primary text-primary hover:bg-primary/10"
-              >
-                <Info className="h-5 w-5" />
-              </Button>
-              
-              <Button
-                size="lg"
-                className="h-16 w-16 rounded-full bg-gradient-to-r from-primary to-secondary"
-                onClick={() => handleSwipe('right')}
-              >
-                <Heart className="h-8 w-8" />
-              </Button>
+            {/* Semi-circular Action Buttons */}
+            <div className="absolute -bottom-16 left-0 right-0 flex items-center justify-center z-30">
+              <div className="relative flex items-center justify-center">
+                {/* Dark bar background */}
+                <div className="absolute inset-0 h-2 bg-zinc-800/80 rounded-full w-80"></div>
+                
+                {/* Action buttons */}
+                <div className="flex items-center justify-center gap-8">
+                  {/* Reject Button - Semi-circle outline */}
+                  <button
+                    onClick={() => handleSwipe('left')}
+                    disabled={isAnimating}
+                    className="relative group transition-all duration-200 hover:scale-105 disabled:opacity-50"
+                  >
+                    <div className="w-16 h-8 border-2 border-red-500 rounded-t-full rounded-b-none bg-transparent group-hover:bg-red-500/10 transition-colors duration-200 flex items-center justify-center">
+                      <X className="h-6 w-6 text-red-500 group-hover:text-red-400" />
+                    </div>
+                  </button>
+                  
+                  {/* Info Button - Pill shape */}
+                  <button
+                    onClick={handleInfoToggle}
+                    className="relative group transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="w-12 h-8 border-2 border-purple-500 rounded-full bg-transparent group-hover:bg-purple-500/10 transition-colors duration-200 flex items-center justify-center">
+                      <Info className="h-4 w-4 text-purple-500 group-hover:text-purple-400" />
+                    </div>
+                  </button>
+                  
+                  {/* Like Button - Filled semi-circle with gradient */}
+                  <button
+                    onClick={() => handleSwipe('right')}
+                    disabled={isAnimating}
+                    className="relative group transition-all duration-200 hover:scale-105 disabled:opacity-50"
+                  >
+                    <div className="w-16 h-8 rounded-t-full rounded-b-none bg-gradient-to-r from-purple-500 to-blue-500 group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-200 flex items-center justify-center shadow-lg">
+                      <Heart className="h-6 w-6 text-white" />
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
@@ -260,6 +337,74 @@ const CollabFeed = () => {
           <Handshake className="h-5 w-5" />
         </Button>
       </Link>
+
+      {/* Info Modal */}
+      {showInfo && currentCollab && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowInfo(false)}
+          />
+          <div className="relative glass-card rounded-3xl p-6 max-w-sm w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold">Project Details</h3>
+              <button
+                onClick={() => setShowInfo(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-lg mb-2">{currentCollab.title}</h4>
+                <div className="flex items-center gap-2 mb-3">
+                  <Avatar className="h-8 w-8 border border-primary/20">
+                    <AvatarImage src={currentCollab.creatorAvatar} alt={currentCollab.creator} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                      {currentCollab.creator.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm text-muted-foreground">@{currentCollab.creator}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h5 className="font-medium mb-2">Role Required</h5>
+                <Badge className="bg-primary/80 backdrop-blur-sm">
+                  {currentCollab.role}
+                </Badge>
+              </div>
+              
+              <div>
+                <h5 className="font-medium mb-2">Description</h5>
+                <p className="text-sm text-muted-foreground">{currentCollab.description}</p>
+              </div>
+              
+              <div>
+                <h5 className="font-medium mb-2">Project Details</h5>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="capitalize">
+                    {currentCollab.paymentType}
+                  </Badge>
+                  {currentCollab.credits && (
+                    <Badge variant="outline" className="border-primary/50 text-primary">
+                      Credits
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="capitalize">
+                    {currentCollab.workStyle}
+                  </Badge>
+                  <Badge variant="outline" className="border-accent/50 text-accent">
+                    {currentCollab.location}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
