@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Filter, X, Heart, Info, Handshake } from "lucide-react";
+import { useCollabFeed, usePingCollab } from "@/hooks/useCollabs";
+import { useWallet } from "@/contexts/WalletContext";
+import { CollabCardSkeleton } from "@/components/LoadingStates";
+import type { CollabFeedFilters } from "@/types/collab";
 
 const CollabFeed = () => {
   const [filter, setFilter] = useState<"all" | "paid" | "barter" | "credits" | "contract" | "freestyle" | "remote">("all");
@@ -14,72 +18,37 @@ const CollabFeed = () => {
   const [showInfo, setShowInfo] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const collabs = [
-    {
-      id: "1",
-      title: "Dark short film",
-      creator: "Dharma",
-      creatorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
-      role: "Actors in negative role",
-      paymentType: "paid" as const,
-      credits: true,
-      workStyle: "contract" as const,
-      location: "Remote",
-      status: "open" as const,
-      description: "Seeking talented actors for negative roles in our psychological thriller short film. Must be comfortable with intense dramatic scenes.",
-      imageUrl: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800",
-    },
-    {
-      id: "2",
-      title: "Cyber Beats EP",
-      creator: "Luna",
-      creatorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
-      role: "Mix Engineer",
-      paymentType: "paid" as const,
-      credits: false,
-      workStyle: "freestyle" as const,
-      location: "LA",
-      status: "shortlisted" as const,
-      description: "Need an experienced mix engineer for our 5-track EP. Must have experience with electronic music.",
-      imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
-    },
-    {
-      id: "3",
-      title: "Abstract Motion",
-      creator: "Koda",
-      creatorAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100",
-      role: "3D Animator",
-      paymentType: "barter" as const,
-      credits: true,
-      workStyle: "freestyle" as const,
-      location: "Remote",
-      status: "open" as const,
-      description: "Seeking a talented 3D animator to bring our abstract concepts to life with smooth, flowing animations.",
-      imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800",
-    },
-  ];
+  const { zoraWallet, isConnected } = useWallet();
+  const pingCollabMutation = usePingCollab();
 
-  const filteredCollabs = filter === "all" 
-    ? collabs 
-    : collabs.filter(c => {
-        if (filter === "paid" || filter === "barter") return c.paymentType === filter;
-        if (filter === "credits") return c.credits;
-        if (filter === "contract" || filter === "freestyle") return c.workStyle === filter;
-        if (filter === "remote") return c.location.toLowerCase() === "remote";
-        return true;
-      });
+  // Build API filters
+  const apiFilters: CollabFeedFilters = {
+    page: 1,
+    limit: 20,
+    ...(filter !== "all" && { filter }),
+  };
+
+  // Fetch collaboration feed from API
+  const { data: feedData, isLoading, error, refetch } = useCollabFeed(apiFilters);
+  
+  const collabs = feedData?.collabs || [];
+  const filteredCollabs = collabs;
 
   const handleSwipe = (direction: 'left' | 'right') => {
-    if (isAnimating) return;
+    if (isAnimating || !filteredCollabs[currentIndex]) return;
     
     setIsAnimating(true);
+    const currentCollab = filteredCollabs[currentIndex];
     
     if (direction === 'right') {
       // Ping/Like action
-      console.log('Pinged:', filteredCollabs[currentIndex].title);
-    } else {
-      // Pass action
-      console.log('Passed:', filteredCollabs[currentIndex].title);
+      pingCollabMutation.mutate({
+        collabId: currentCollab.id,
+        data: {
+          interestedRole: currentCollab.role,
+          bio: "Interested in collaborating on this project",
+        },
+      });
     }
     
     // Animate card out
@@ -204,7 +173,19 @@ const CollabFeed = () => {
       </header>
 
       <main className="max-w-md mx-auto p-4 h-[calc(100vh-250px)] flex items-center justify-center">
-        {filteredCollabs.length > 0 ? (
+        {!isConnected ? (
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">Please connect your wallet to view collaborations</p>
+            <Button onClick={() => window.location.reload()}>Connect Wallet</Button>
+          </div>
+        ) : isLoading ? (
+          <CollabCardSkeleton />
+        ) : error ? (
+          <div className="text-center">
+            <p className="text-destructive mb-4">Failed to load collaborations</p>
+            <Button onClick={() => refetch()}>Retry</Button>
+          </div>
+        ) : filteredCollabs.length > 0 ? (
           <div className="relative w-full h-full max-h-[600px]">
             {/* Tinder-style card stack */}
             {filteredCollabs.slice(currentIndex, currentIndex + 2).map((collab, index) => (
@@ -224,8 +205,8 @@ const CollabFeed = () => {
                 {/* Card Image */}
                 <div className="relative h-3/5">
                   <img
-                    src={collab.imageUrl}
-                    alt={collab.title}
+                    src={collab.coinData?.mediaContent?.previewImage || "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800"}
+                    alt={collab.coinData?.name || "Collaboration"}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -241,20 +222,19 @@ const CollabFeed = () => {
                 {/* Card Content */}
                 <div className="p-6 space-y-4">
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">{collab.title}</h2>
+                    <h2 className="text-3xl font-bold mb-2">{collab.coinData?.name || "Untitled Project"}</h2>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6 border border-primary/20">
-                        <AvatarImage src={collab.creatorAvatar} alt={collab.creator} />
                         <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                          {collab.creator.slice(0, 2).toUpperCase()}
+                          {collab.creatorWallet.slice(2, 4).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <p className="text-sm text-muted-foreground">@{collab.creator}</p>
+                      <p className="text-sm text-muted-foreground">@{collab.creatorWallet.slice(0, 8)}...</p>
                     </div>
                   </div>
 
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {collab.description}
+                    {collab.coinData?.description || "No description available"}
                   </p>
 
                   <div className="flex flex-wrap gap-2">
@@ -358,15 +338,14 @@ const CollabFeed = () => {
             
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold text-lg mb-2">{currentCollab.title}</h4>
+                <h4 className="font-semibold text-lg mb-2">{currentCollab.coinData?.name || "Untitled Project"}</h4>
                 <div className="flex items-center gap-2 mb-3">
                   <Avatar className="h-8 w-8 border border-primary/20">
-                    <AvatarImage src={currentCollab.creatorAvatar} alt={currentCollab.creator} />
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                      {currentCollab.creator.slice(0, 2).toUpperCase()}
+                      {currentCollab.creatorWallet.slice(2, 4).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-sm text-muted-foreground">@{currentCollab.creator}</p>
+                  <p className="text-sm text-muted-foreground">@{currentCollab.creatorWallet.slice(0, 8)}...</p>
                 </div>
               </div>
               
@@ -379,7 +358,7 @@ const CollabFeed = () => {
               
               <div>
                 <h5 className="font-medium mb-2">Description</h5>
-                <p className="text-sm text-muted-foreground">{currentCollab.description}</p>
+                <p className="text-sm text-muted-foreground">{currentCollab.coinData?.description || "No description available"}</p>
               </div>
               
               <div>

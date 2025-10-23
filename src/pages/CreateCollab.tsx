@@ -9,6 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Upload, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useCreateCollab } from "@/hooks/useCollabs";
+import { useWallet } from "@/contexts/WalletContext";
+import type { CreateCollabRequest } from "@/types/collab";
 
 interface Collaborator {
   role: string;
@@ -21,6 +24,9 @@ interface Collaborator {
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const { zoraWallet, isConnected } = useWallet();
+  const createCollabMutation = useCreateCollab();
+  
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -52,13 +58,47 @@ const CreatePost = () => {
 
   const totalCredits = collaborators.reduce((sum, c) => sum + (c.credits || 0), 0);
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
+    if (!isConnected) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
     if (totalCredits !== 100) {
       toast.error("Total credits must equal 100%");
       return;
     }
-    toast.success("PostCoin minted successfully!");
-    navigate("/collab");
+
+    if (collaborators.length === 0) {
+      toast.error("Please add at least one collaborator");
+      return;
+    }
+
+    // Prepare API request data
+    const collabData: CreateCollabRequest = {
+      role: collaborators[0]?.role || "Collaborator", // Use first collaborator's role as primary
+      paymentType: collaborators[0]?.compensationType === "both" ? "both" : 
+                   collaborators[0]?.compensationType === "paid" ? "paid" : "barter",
+      credits: true, // Always true since we're tracking credits
+      workStyle: collaborators[0]?.timeCommitment === "ongoing" ? "freestyle" : "contract",
+      location: "Remote", // Default to remote for now
+      collaborators: collaborators.map(c => ({
+        role: c.role,
+        creatorType: c.creatorType as "indie" | "org" | "brand",
+        credits: c.credits,
+        compensationType: c.compensationType as "paid" | "barter" | "both",
+        timeCommitment: c.timeCommitment as "ongoing" | "one-time",
+        jobDescription: c.jobDescription,
+      })),
+    };
+
+    try {
+      const response = await createCollabMutation.mutateAsync(collabData);
+      toast.success("PostCoin minted successfully!");
+      navigate("/collab");
+    } catch (error) {
+      console.error("Failed to create collaboration:", error);
+    }
   };
 
   return (
@@ -269,11 +309,11 @@ const CreatePost = () => {
 
               <Button
                 onClick={handlePublish}
-                disabled={totalCredits !== 100 || collaborators.length === 0}
+                disabled={totalCredits !== 100 || collaborators.length === 0 || !isConnected || createCollabMutation.isPending}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Publish & Mint PostCoin
+                {createCollabMutation.isPending ? "Minting PostCoin..." : "Publish & Mint PostCoin"}
               </Button>
             </div>
           </div>
