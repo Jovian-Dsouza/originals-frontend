@@ -4,53 +4,64 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Verified, CheckCircle2, Clock, LogOut, Copy } from "lucide-react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getProfile, getProfileCoins } from "@zoralabs/coins-sdk";
 
 const Profile = () => {
   const { logout, user } = usePrivy();
   const { wallets } = useWallets();
   const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
 
-  useEffect(() => {
-    console.log('Privy User:', user);
-    console.log('Privy Wallets:', wallets);
-    
-    // Print wallet addresses specifically
-    if (wallets && wallets.length > 0) {
-      console.log('Wallet Addresses:');
-      wallets.forEach((wallet, index) => {
-        console.log(`Wallet ${index + 1}:`, {
-          address: wallet.address,
-          walletClientType: wallet.walletClientType,
-          chainId: wallet.chainId
-        });
-      });
-    } else {
-      console.log('No wallets connected');
-      // If user is authenticated via email but has no wallets, try to create one
-      if (user?.email?.address && !user?.wallet?.address) {
-        console.log('User authenticated via email but no wallet found. Embedded wallet should be created automatically.');
-      }
-    }
-    
-    // Print email if available
-    if (user?.email?.address) {
-      console.log('Email Address:', user.email.address);
-    }
-    
-    // Print wallet info from user object
-    if (user?.wallet?.address) {
-      console.log('User Wallet Address:', user.wallet.address);
-    }
+  // Zora profile state
+  const [profileData, setProfileData] = useState<any>(null);
+  const [profileCoins, setProfileCoins] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    // Print Zora wallet address if available
-    if (user?.linkedAccounts && user.linkedAccounts.length > 0) {
-      const crossAppAccount = user.linkedAccounts.find(account => account.type === 'cross_app');
-      if (crossAppAccount?.smartWallets && crossAppAccount.smartWallets.length > 0) {
-        console.log('Zora Wallet Address:', crossAppAccount.smartWallets[0].address);
+
+
+  // Fetch Zora profile and coins data
+  useEffect(() => {
+    const fetchZoraData = async () => {
+      if (!user?.linkedAccounts || user.linkedAccounts.length === 0) {
+        setError("No Zora wallet connected");
+        return;
       }
-    }
-  }, [user, wallets]);
+
+      const crossAppAccount = user.linkedAccounts.find(account => account.type === 'cross_app');
+      if (!crossAppAccount?.smartWallets || crossAppAccount.smartWallets.length === 0) {
+        setError("No Zora wallet found");
+        return;
+      }
+
+      const zoraWalletAddress = crossAppAccount.smartWallets[0].address;
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Fetch profile data
+        const profileResponse = await getProfile({
+          identifier: zoraWalletAddress,
+        });
+
+        // Fetch profile coins
+        const coinsResponse = await getProfileCoins({
+          identifier: zoraWalletAddress,
+          count: 20,
+        });
+
+        setProfileData(profileResponse?.data?.profile);
+        setProfileCoins(coinsResponse?.data?.profile);
+      } catch (err) {
+        console.error('Error fetching Zora data:', err);
+        setError("Failed to fetch profile data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchZoraData();
+  }, [user]);
 
 
   const handleLogout = async () => {
@@ -65,48 +76,26 @@ const Profile = () => {
     navigator.clipboard.writeText(text);
   };
   
+  // Dynamic stats based on Zora data
   const stats = [
-    { label: "CC Market Cap", value: "250k $", change: "+12%" },
-    { label: "Content", value: "24", change: "+3" },
-    { label: "Gigs", value: "47", change: "+8" },
-  ];
-
-  const finalPosts = [
-    {
-      id: "1",
-      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400",
-      marketCap: 234,
-      marketCapChange: "up",
+    { 
+      label: "CC Market Cap", 
+      value: loading ? "..." : profileData?.creatorCoin?.marketCap ? 
+        `$${parseFloat(profileData.creatorCoin.marketCap).toLocaleString()}` : 
+        "N/A", 
+      change: loading ? "..." : profileData?.creatorCoin?.marketCapDelta24h ? 
+        `${parseFloat(profileData.creatorCoin.marketCapDelta24h) >= 0 ? '+' : ''}${(parseFloat(profileData.creatorCoin.marketCapDelta24h) * 100).toFixed(1)}%` : 
+        "N/A" 
     },
-    {
-      id: "2",
-      imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400",
-      marketCap: 567,
-      marketCapChange: "down",
+    { 
+      label: "Content", 
+      value: loading ? "..." : profileCoins?.createdCoins?.count?.toString() || "0", 
+      change: "+0" // Not available in Zora SDK
     },
-    {
-      id: "3",
-      imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=400",
-      marketCap: 892,
-      marketCapChange: "up",
-    },
-    {
-      id: "4",
-      imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400",
-      marketCap: 445,
-      marketCapChange: "up",
-    },
-    {
-      id: "5",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-      marketCap: 678,
-      marketCapChange: "down",
-    },
-    {
-      id: "6",
-      imageUrl: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400",
-      marketCap: 523,
-      marketCapChange: "up",
+    { 
+      label: "Gigs", 
+      value: "47", // Keep hardcoded as not available in Zora SDK
+      change: "+8" 
     },
   ];
 
@@ -223,7 +212,17 @@ const Profile = () => {
           {/* Profile Header */}
           <div className="flex items-start gap-4 mb-6">
             <div className="relative">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow" />
+              {loading ? (
+                <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse" />
+              ) : profileData?.avatar?.medium ? (
+                <img 
+                  src={profileData.avatar.medium} 
+                  alt="Profile" 
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow" />
+              )}
               <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-secondary flex items-center justify-center">
                 <Verified className="h-4 w-4 text-background" />
               </div>
@@ -231,13 +230,26 @@ const Profile = () => {
             
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-1">
-                {user?.email?.address || user?.wallet?.address ? 
-                  (user.email?.address || `${wallets[0]?.address.slice(0, 6)}...${wallets[0]?.address.slice(-4)}`) : 
+                {loading ? (
+                  <div className="h-8 w-32 bg-muted animate-pulse rounded" />
+                ) : profileData?.displayName || profileData?.handle ? (
+                  profileData.displayName || profileData.handle
+                ) : user?.email?.address || user?.wallet?.address ? (
+                  user.email?.address || `${wallets[0]?.address.slice(0, 6)}...${wallets[0]?.address.slice(-4)}`
+                ) : (
                   "Dharma"
-                }
+                )}
               </h2>
               <p className="text-sm text-muted-foreground mb-3">
-                {user?.email?.address ? "Email Authenticated" : "Wallet Connected"} • Available for Collabs
+                {loading ? (
+                  <div className="h-4 w-48 bg-muted animate-pulse rounded" />
+                ) : profileData?.bio ? (
+                  profileData.bio
+                ) : user?.email?.address ? (
+                  "Email Authenticated • Available for Collabs"
+                ) : (
+                  "Wallet Connected • Available for Collabs"
+                )}
               </p>
               <div className="flex gap-2 flex-wrap">
                 {skills.map((skill) => (
@@ -269,24 +281,56 @@ const Profile = () => {
             <TabsTrigger value="professional">Pro</TabsTrigger>
           </TabsList>
 
-          {/* Tab 1: Content (Final posts) */}
+          {/* Tab 1: Content (Profile coins) */}
           <TabsContent value="content">
-            <div className="grid grid-cols-3 gap-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {finalPosts.map((post) => (
-                <div key={post.id} className="aspect-square relative group cursor-pointer">
-                  <img
-                    src={post.imageUrl}
-                    alt="Post"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center text-white">
-                    <div className={`text-lg font-bold ${post.marketCapChange === "up" ? "text-green-500" : "text-red-500"}`}>
-                      ${post.marketCap}
+            {loading ? (
+              <div className="grid grid-cols-3 gap-1">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="aspect-square bg-muted animate-pulse rounded" />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <p className="text-sm text-muted-foreground">
+                  {error.includes("wallet") ? "Connect your Zora wallet to view your profile" : "Create your Zora profile to get started"}
+                </p>
+              </div>
+            ) : !profileCoins?.createdCoins?.edges || profileCoins.createdCoins.edges.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">No content created yet</p>
+                <p className="text-sm text-muted-foreground">Start creating!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {profileCoins.createdCoins.edges.map((edge: any, index: number) => {
+                  const coin = edge.node;
+                  const marketCapChange = coin.marketCapDelta24h ? 
+                    (parseFloat(coin.marketCapDelta24h) >= 0 ? "up" : "down") : "up";
+                  
+                  return (
+                    <div key={coin.id || index} className="aspect-square relative group cursor-pointer">
+                      {coin.mediaContent?.previewImage?.medium || coin.mediaContent?.previewImage?.small ? (
+                        <img
+                          src={coin.mediaContent.previewImage.medium || coin.mediaContent.previewImage.small}
+                          alt={coin.name || "Content"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                          <span className="text-xs text-muted-foreground">{coin.name || "Content"}</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center text-white">
+                        <div className={`text-lg font-bold ${marketCapChange === "up" ? "text-green-500" : "text-red-500"}`}>
+                          ${coin.marketCap ? parseFloat(coin.marketCap).toLocaleString() : "N/A"}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
 
           {/* Tab 3: Professional profile */}
