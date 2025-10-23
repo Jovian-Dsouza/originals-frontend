@@ -42,6 +42,14 @@ const Profile = () => {
     if (user?.wallet?.address) {
       console.log('User Wallet Address:', user.wallet.address);
     }
+
+    // Print Zora wallet address if available
+    if (user?.linkedAccounts && user.linkedAccounts.length > 0) {
+      const crossAppAccount = user.linkedAccounts.find(account => account.type === 'cross_app');
+      if (crossAppAccount?.smartWallets && crossAppAccount.smartWallets.length > 0) {
+        console.log('Zora Wallet Address:', crossAppAccount.smartWallets[0].address);
+      }
+    }
   }, [user, wallets]);
 
 
