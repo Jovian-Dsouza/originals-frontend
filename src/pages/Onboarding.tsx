@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -10,8 +11,10 @@ import HoloIcon from "@/components/HoloIcon";
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { ready, authenticated, login, user } = usePrivy();
+  const { wallets } = useWallets();
   const [page, setPage] = useState(1);
-  const [loginMethod, setLoginMethod] = useState<"zora" | "email" | null>(null);
+  const [loginMethod, setLoginMethod] = useState<"wallet" | "email" | null>(null);
   const [userType, setUserType] = useState<"indie" | "commercial" | null>(null);
   const [creativeDomains, setCreativeDomains] = useState<string[]>([]);
   const [status, setStatus] = useState<string>("exploring");
@@ -41,6 +44,32 @@ const Onboarding = () => {
         ? prev.filter(d => d !== domain)
         : [...prev, domain]
     );
+  };
+
+  // Handle authentication state changes
+  useEffect(() => {
+    if (ready && authenticated && user) {
+      // User is authenticated, advance to appropriate page
+      if (page === 2) {
+        setPage(3);
+      }
+    }
+  }, [ready, authenticated, user, page]);
+
+  const handleWalletLogin = async () => {
+    try {
+      await login({ loginMethods: ['wallet'] });
+    } catch (error) {
+      console.error('Wallet login failed:', error);
+    }
+  };
+
+  const handleEmailLogin = async () => {
+    try {
+      await login({ loginMethods: ['email'] });
+    } catch (error) {
+      console.error('Email login failed:', error);
+    }
   };
 
   const handleComplete = () => {
@@ -116,25 +145,25 @@ const Onboarding = () => {
               <div className="space-y-3 pt-4 relative">
                 <Button
                   onClick={() => {
-                    setLoginMethod("zora");
-                    setPage(2);
+                    setLoginMethod("email");
+                    handleEmailLogin();
                   }}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                   size="lg"
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
-                  Login with Zora
+                  Login with Email
                 </Button>
                 <Button
                   onClick={() => {
-                    setLoginMethod("email");
-                    setPage(2);
+                    setLoginMethod("wallet");
+                    handleWalletLogin();
                   }}
                   variant="outline"
                   className="w-full border-primary/30 hover:border-primary"
                   size="lg"
                 >
-                  Login with Email
+                  Login with Wallet
                 </Button>
               </div>
             </div>
@@ -220,7 +249,7 @@ const Onboarding = () => {
           )}
 
           {/* Page 2: Login Flow - Zora */}
-          {page === 2 && loginMethod === "zora" && (
+          {page === 2 && loginMethod === "wallet" && (
             <div className="glass-card rounded-3xl p-8 space-y-6 animate-fade-in text-center">
               <div className="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow flex items-center justify-center">
                 <Sparkles className="h-12 w-12 text-white animate-spin" />
@@ -235,7 +264,12 @@ const Onboarding = () => {
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary" />
                   <div>
-                    <h3 className="font-bold">Dharma.eth</h3>
+                    <h3 className="font-bold">
+                      {wallets.length > 0 
+                        ? `${wallets[0].address.slice(0, 6)}...${wallets[0].address.slice(-4)}`
+                        : "Wallet Connected"
+                      }
+                    </h3>
                     <p className="text-xs text-muted-foreground">Creator Coin detected</p>
                   </div>
                 </div>
@@ -255,6 +289,7 @@ const Onboarding = () => {
 
               <Button
                 onClick={() => setPage(3)}
+                disabled={!authenticated}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >

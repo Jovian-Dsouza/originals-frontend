@@ -2,10 +2,25 @@ import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Verified, CheckCircle2, Clock } from "lucide-react";
+import { Settings, Verified, CheckCircle2, Clock, LogOut, Copy } from "lucide-react";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 const Profile = () => {
+  const { logout, user } = usePrivy();
+  const { wallets } = useWallets();
   const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
   
   const stats = [
     { label: "CC Market Cap", value: "250k $", change: "+12%" },
@@ -152,9 +167,14 @@ const Profile = () => {
         <div className="max-w-screen-xl mx-auto p-4">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Profile</h1>
-            <Button variant="ghost" size="icon">
-              <Settings className="h-5 w-5" />
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="icon">
+                <Settings className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Profile Header */}
@@ -167,9 +187,14 @@ const Profile = () => {
             </div>
             
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">Dharma</h2>
+              <h2 className="text-2xl font-bold mb-1">
+                {user?.email?.address || user?.wallet?.address ? 
+                  (user.email?.address || `${wallets[0]?.address.slice(0, 6)}...${wallets[0]?.address.slice(-4)}`) : 
+                  "Dharma"
+                }
+              </h2>
               <p className="text-sm text-muted-foreground mb-3">
-                CreatorCoin Holder • Available for Collabs
+                {user?.email?.address ? "Email Authenticated" : "Wallet Connected"} • Available for Collabs
               </p>
               <div className="flex gap-2 flex-wrap">
                 {skills.map((skill) => (
@@ -223,22 +248,56 @@ const Profile = () => {
 
           {/* Tab 3: Professional profile */}
           <TabsContent value="professional" className="space-y-6">
-            {/* Zora Profile Section */}
+            {/* Wallet Information Section */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">
-                Zora Profile
+                Wallet Information
               </h3>
-              <div className="glass-card rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary" />
-                  <div>
-                    <p className="font-bold">dharma.zora</p>
-                    <p className="text-sm text-muted-foreground">Verified Creator</p>
+              <div className="glass-card rounded-2xl p-6 space-y-4">
+                {wallets.length > 0 ? (
+                  wallets.map((wallet, index) => (
+                    <div key={wallet.address} className="flex items-center justify-between p-3 rounded-lg bg-background/50">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-secondary" />
+                        <div>
+                          <p className="font-bold text-sm">{wallet.walletClientType}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
+                          </p>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => copyToClipboard(wallet.address)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">No wallet connected</p>
                   </div>
-                </div>
-                <Button variant="outline" className="w-full">
-                  View on Zora
-                </Button>
+                )}
+                {user?.email?.address && (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-background/50">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-secondary to-primary" />
+                      <div>
+                        <p className="font-bold text-sm">Email</p>
+                        <p className="text-xs text-muted-foreground">{user.email.address}</p>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => copyToClipboard(user.email.address)}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
