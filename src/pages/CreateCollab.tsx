@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Upload, Plus, Trash2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useCreateCollab } from "@/hooks/useCollabs";
 import { useWallet } from "@/contexts/WalletContext";
 import { uploadFileToIPFS } from "@/lib/ipfs";
-import type { CreateCollabRequest } from "@/types/collab";
+import { apiClient, ApiResponse } from "@/lib/api-client";
+import type { MintPostCoinRequest } from "@/types/postcoin";
 
 interface Collaborator {
   role: string;
@@ -23,10 +23,18 @@ interface Collaborator {
   jobDescription: string;
 }
 
+interface MintPostCoinData {
+  collabPostId: string;
+  coinAddress: string;
+  coinName: string;
+  coinSymbol: string;
+  transactionHash?: string;
+  zoraUrl: string;
+}
+
 const CreatePost = () => {
   const navigate = useNavigate();
   const { zoraWallet, isConnected } = useWallet();
-  const createCollabMutation = useCreateCollab();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [step, setStep] = useState(1);
@@ -120,40 +128,77 @@ const CreatePost = () => {
       return;
     }
 
-    if (totalCredits !== 100) {
-      toast.error("Total credits must equal 100%");
+    // if (totalCredits !== 100) {
+    //   toast.error("Total credits must equal 100%");
+    //   return;
+    // }
+
+    // if (collaborators.length === 0) {
+    //   toast.error("Please add at least one collaborator");
+    //   return;
+    // }
+
+    if (!title || !description) {
+      toast.error("Please fill in title and description");
       return;
     }
 
-    if (collaborators.length === 0) {
-      toast.error("Please add at least one collaborator");
+    // Validate required fields
+    if (!selectedFile || !ipfsUrl) {
+      toast.error("Please upload a media file first");
       return;
     }
 
-    // Prepare API request data
-    const collabData: CreateCollabRequest = {
-      role: collaborators[0]?.role || "Collaborator", // Use first collaborator's role as primary
-      paymentType: collaborators[0]?.compensationType === "both" ? "both" : 
-                   collaborators[0]?.compensationType === "paid" ? "paid" : "barter",
-      credits: true, // Always true since we're tracking credits
-      workStyle: collaborators[0]?.timeCommitment === "ongoing" ? "freestyle" : "contract",
-      location: "Remote", // Default to remote for now
-      collaborators: collaborators.map(c => ({
-        role: c.role,
-        creatorType: c.creatorType as "indie" | "org" | "brand",
-        credits: c.credits,
-        compensationType: c.compensationType as "paid" | "barter" | "both",
-        timeCommitment: c.timeCommitment as "ongoing" | "one-time",
-        jobDescription: c.jobDescription,
-      })),
+    // Prepare API request data for PostCoin minting
+    const mintPostCoinData: MintPostCoinRequest = {
+      title,
+      description,
+      media: {
+        ipfsUrl,
+        gatewayUrl: ipfsUrl.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/'),
+        fileName: selectedFile.name,
+        fileType: selectedFile.type,
+        fileSize: selectedFile.size
+      },
+      collaboration: {
+        role: collaborators[0]?.role || "Collaborator",
+        paymentType: collaborators[0]?.compensationType === "both" ? "both" : 
+                     collaborators[0]?.compensationType === "paid" ? "paid" : "barter",
+        credits: totalCredits,
+        workStyle: collaborators[0]?.timeCommitment === "ongoing" ? "freestyle" : "contract",
+        location: "Remote",
+        collaborators: collaborators.map(c => ({
+          role: c.role,
+          creatorType: c.creatorType as "indie" | "org" | "brand",
+          credits: c.credits,
+          compensationType: c.compensationType as "paid" | "barter" | "both",
+          timeCommitment: c.timeCommitment as "ongoing" | "one-time",
+          jobDescription: c.jobDescription,
+        })),
+      },
+      creatorWallet: zoraWallet || "",
     };
 
     try {
-      const response = await createCollabMutation.mutateAsync(collabData);
-      toast.success("PostCoin minted successfully!");
-      navigate("/collab");
+      // Call the new PostCoin minting API using the API client
+      const result: ApiResponse<MintPostCoinData> = await apiClient.post<MintPostCoinData>(
+        '/collabs/mint-postcoin',
+        mintPostCoinData,
+        zoraWallet || undefined
+      );
+
+      if (result.success) {
+        toast.success("PostCoin minted successfully!");
+        console.log("PostCoin Details:", result.data);
+        console.log("Zora URL:", result.data?.zoraUrl);
+        navigate("/collab");
+      } else {
+        toast.error(result.error?.message || "Failed to mint PostCoin");
+        console.error("Minting errors:", result.error);
+      }
     } catch (error) {
-      console.error("Failed to create collaboration:", error);
+      console.error("Failed to mint PostCoin:", error);
+      toast.error("Failed to mint PostCoin. Please try again.");
     }
   };
 
@@ -264,7 +309,7 @@ const CreatePost = () => {
                         </div>
                       )}
                       
-                      {!ipfsUrl && (
+                      {/* {!ipfsUrl && (
                         <Button
                           onClick={handleFileUpload}
                           disabled={isUploading}
@@ -280,7 +325,7 @@ const CreatePost = () => {
                           <p className="text-xs text-green-400 font-medium mb-1">✅ Uploaded to IPFS</p>
                           <p className="text-xs text-muted-foreground break-all">{ipfsUrl}</p>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 )}
@@ -434,11 +479,11 @@ const CreatePost = () => {
 
               <Button
                 onClick={handlePublish}
-                disabled={totalCredits !== 100 || collaborators.length === 0 || !isConnected || createCollabMutation.isPending}
+                disabled={!isConnected || !selectedFile || !ipfsUrl}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                {createCollabMutation.isPending ? "Minting PostCoin..." : "Publish & Mint PostCoin"}
+                Publish & Mint PostCoin
               </Button>
             </div>
           </div>
