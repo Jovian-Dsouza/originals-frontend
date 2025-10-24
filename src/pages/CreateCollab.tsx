@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Upload, Plus, Trash2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateCollab } from "@/hooks/useCollabs";
 import { useWallet } from "@/contexts/WalletContext";
+import { uploadFileToIPFS } from "@/lib/ipfs";
 import type { CreateCollabRequest } from "@/types/collab";
 
 interface Collaborator {
@@ -26,11 +27,16 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const { zoraWallet, isConnected } = useWallet();
   const createCollabMutation = useCreateCollab();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [ipfsUrl, setIpfsUrl] = useState<string | null>(null);
 
   const addCollaborator = () => {
     setCollaborators([
@@ -57,6 +63,56 @@ const CreatePost = () => {
   };
 
   const totalCredits = collaborators.reduce((sum, c) => sum + (c.credits || 0), 0);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const result = await uploadFileToIPFS(selectedFile);
+      setIpfsUrl(result.ipfsUri);
+      toast.success("File uploaded to IPFS successfully!");
+      console.log("IPFS URL:", result.ipfsUri);
+      console.log("Gateway URL:", result.gatewayUrl);
+    } catch (error) {
+      console.error("Failed to upload file:", error);
+      toast.error("Failed to upload file to IPFS");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleContinueToCollaborators = async () => {
+    if (!title || !description) {
+      toast.error("Please fill in title and description");
+      return;
+    }
+
+    // If there's a selected file but no IPFS URL, upload it first
+    if (selectedFile && !ipfsUrl) {
+      await handleFileUpload();
+      // Wait a moment for the upload to complete
+      setTimeout(() => {
+        setStep(2);
+      }, 1000);
+    } else {
+      setStep(2);
+    }
+  };
 
   const handlePublish = async () => {
     if (!isConnected) {
@@ -150,24 +206,93 @@ const CreatePost = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Upload Media</label>
-                <div className="border-2 border-dashed border-white/20 rounded-2xl p-12 text-center hover:border-primary/50 smooth-transition cursor-pointer">
-                  <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    Click to upload or drag and drop
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Images, videos, or audio files
-                  </p>
-                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,video/*,audio/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                
+                {!selectedFile ? (
+                  <div 
+                    className="border-2 border-dashed border-white/20 rounded-2xl p-12 text-center hover:border-primary/50 smooth-transition cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                      Click to upload or drag and drop
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Images, videos, or audio files
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="border border-white/20 rounded-xl p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <ImageIcon className="h-5 w-5 text-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{selectedFile.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setImagePreview(null);
+                            setIpfsUrl(null);
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = '';
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      {imagePreview && selectedFile.type.startsWith('image/') && (
+                        <div className="mb-3">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                        </div>
+                      )}
+                      
+                      {!ipfsUrl && (
+                        <Button
+                          onClick={handleFileUpload}
+                          disabled={isUploading}
+                          className="w-full"
+                          size="sm"
+                        >
+                          {isUploading ? "Uploading to IPFS..." : "Upload to IPFS"}
+                        </Button>
+                      )}
+                      
+                      {ipfsUrl && (
+                        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                          <p className="text-xs text-green-400 font-medium mb-1">✅ Uploaded to IPFS</p>
+                          <p className="text-xs text-muted-foreground break-all">{ipfsUrl}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Button
-                onClick={() => setStep(2)}
-                disabled={!title || !description}
+                onClick={handleContinueToCollaborators}
+                disabled={!title || !description || isUploading}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Continue to Collaborators
+                {isUploading ? "Uploading..." : "Continue to Collaborators"}
               </Button>
             </div>
           </div>
