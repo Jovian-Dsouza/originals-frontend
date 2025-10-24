@@ -19,9 +19,11 @@ export const PingCard = ({ ping, onAccept, onDecline, isLoading = false }: PingC
   return (
     <div className="border-b border-white/10 p-4 hover:bg-muted/20 smooth-transition">
       <div className="flex items-start gap-3 mb-3">
+        {/* User Avatar */}
         <UserProfileDisplay 
           walletAddress={ping.collabPost?.creatorWallet || ''} 
           avatarSize="md"
+          showName={false}
           className="flex-shrink-0"
         />
         
@@ -33,7 +35,7 @@ export const PingCard = ({ ping, onAccept, onDecline, isLoading = false }: PingC
             </span>
           </div>
           <p className="text-xs text-muted-foreground mb-1">
-            {ping.interestedRole} • {ping.collabPost?.role || "Collaboration"}
+            {ping.collabPost?.creatorWallet ? `@${ping.collabPost.creatorWallet.slice(0, 8)}...` : 'Unknown User'}
           </p>
           <p className="text-xs text-muted-foreground">{ping.bio}</p>
         </div>
