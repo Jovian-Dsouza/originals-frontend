@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  originals-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+        - VITE_WS_URL=${VITE_WS_URL}
+        - VITE_PINATA_API_KEY=${VITE_PINATA_API_KEY}
+        - VITE_PINATA_SECRET_KEY=${VITE_PINATA_SECRET_KEY}
+        - VITE_PRIVY_APP_ID=${VITE_PRIVY_APP_ID}
+        - VITE_PRIVY_APP_SECRET=${VITE_PRIVY_APP_SECRET}
+        - VITE_PRIVY_ZORA_APP_ID=${VITE_PRIVY_ZORA_APP_ID}
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - VITE_WS_URL=${VITE_WS_URL}
+      - VITE_PINATA_API_KEY=${VITE_PINATA_API_KEY}
+      - VITE_PINATA_SECRET_KEY=${VITE_PINATA_SECRET_KEY}
+      - VITE_PRIVY_APP_ID=${VITE_PRIVY_APP_ID}
+      - VITE_PRIVY_APP_SECRET=${VITE_PRIVY_APP_SECRET}
+      - VITE_PRIVY_ZORA_APP_ID=${VITE_PRIVY_ZORA_APP_ID}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3008"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.originals-frontend.rule=Host(`originals.jovihost.site`)"
+      - "traefik.http.routers.originals-frontend.entrypoints=websecure"
+      - "traefik.http.routers.originals-frontend.tls.certResolver=letsencrypt"
+      - "traefik.http.services.originals-frontend.loadbalancer.server.port=3008"
+    networks:
+      - dokploy-network
+
