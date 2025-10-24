@@ -263,7 +263,7 @@ const CollabFeed = () => {
                 {/* Action buttons */}
                 <div className="flex items-center justify-center gap-8">
                   {/* Reject Button - Semi-circle outline */}
-                  <button
+                  {/* <button
                     onClick={() => handleSwipe('left')}
                     disabled={isAnimating}
                     className="relative group transition-all duration-200 hover:scale-105 disabled:opacity-50"
@@ -271,20 +271,20 @@ const CollabFeed = () => {
                     <div className="w-16 h-8 border-2 border-red-500 rounded-t-full rounded-b-none bg-transparent group-hover:bg-red-500/10 transition-colors duration-200 flex items-center justify-center">
                       <X className="h-6 w-6 text-red-500 group-hover:text-red-400" />
                     </div>
-                  </button>
+                  </button> */}
                   
                   {/* Info Button - Pill shape */}
-                  <button
+                  {/* <button
                     onClick={handleInfoToggle}
                     className="relative group transition-all duration-200 hover:scale-105"
                   >
                     <div className="w-12 h-8 border-2 border-purple-500 rounded-full bg-transparent group-hover:bg-purple-500/10 transition-colors duration-200 flex items-center justify-center">
                       <Info className="h-4 w-4 text-purple-500 group-hover:text-purple-400" />
                     </div>
-                  </button>
+                  </button> */}
                   
                   {/* Like Button - Filled semi-circle with gradient */}
-                  <button
+                  {/* <button
                     onClick={() => handleSwipe('right')}
                     disabled={isAnimating}
                     className="relative group transition-all duration-200 hover:scale-105 disabled:opacity-50"
@@ -292,7 +292,7 @@ const CollabFeed = () => {
                     <div className="w-16 h-8 rounded-t-full rounded-b-none bg-gradient-to-r from-purple-500 to-blue-500 group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-200 flex items-center justify-center shadow-lg">
                       <Heart className="h-6 w-6 text-white" />
                     </div>
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
