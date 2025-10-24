@@ -38,16 +38,38 @@ export const useRespondToPing = () => {
       }
       return matchService.respondToPing(pingId, data, wallet);
     },
+    onMutate: async ({ pingId }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: queryKeys.receivedPings(wallet || '', {}) });
+      
+      // Snapshot the previous value
+      const previousPings = queryClient.getQueryData(queryKeys.receivedPings(wallet || '', {}));
+      
+      // Optimistically update to remove the ping
+      queryClient.setQueryData(queryKeys.receivedPings(wallet || '', {}), (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pings: old.pings.filter((ping: any) => ping.id !== pingId)
+        };
+      });
+      
+      // Return a context object with the snapshotted value
+      return { previousPings };
+    },
+    onError: (error: any, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousPings) {
+        queryClient.setQueryData(queryKeys.receivedPings(wallet || '', {}), context.previousPings);
+      }
+      toast.error(error.message || 'Failed to respond to ping');
+    },
     onSuccess: (response, { data }) => {
       const action = data.action === 'accept' ? 'accepted' : 'declined';
       toast.success(`Ping ${action} successfully!`);
       
-      // Invalidate pings and matches queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.receivedPings(wallet || '', {}) });
+      // Invalidate matches query in case a new match was created
       queryClient.invalidateQueries({ queryKey: queryKeys.matches(wallet || '', {}) });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to respond to ping');
     },
   });
 };

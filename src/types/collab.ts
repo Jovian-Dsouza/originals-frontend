@@ -69,8 +69,21 @@ export interface Ping {
   createdAt: string;
   respondedAt?: string;
   collabPost?: {
+    id: string;
     coinAddress: string;
+    creatorWallet: string;
+    title: string;
+    description: string;
     role: string;
+    paymentType: "paid" | "barter" | "both";
+    credits: number;
+    media?: {
+      ipfsUrl: string;
+      fileName: string;
+      fileSize: number;
+      fileType: string;
+      gatewayUrl: string;
+    };
   };
 }
 

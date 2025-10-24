@@ -6,6 +6,7 @@ import { MessageCircle, CheckCircle2, X, User } from "lucide-react";
 import { useReceivedPings, useRespondToPing, useMatches } from "@/hooks/useMatches";
 import { useWallet } from "@/contexts/WalletContext";
 import { PingItemSkeleton, MatchItemSkeleton } from "@/components/LoadingStates";
+import { PingCard } from "@/components/PingCard";
 import { useNavigate } from "react-router-dom";
 
 const Contracts = () => {
@@ -70,55 +71,13 @@ const Contracts = () => {
               </div>
             ) : pingsReceived.length > 0 ? (
               pingsReceived.map((ping) => (
-                <div
+                <PingCard
                   key={ping.id}
-                  className="border-b border-white/10 p-4 hover:bg-muted/20 smooth-transition"
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <div className="text-white font-bold text-sm">
-                        {ping.pingedWallet.slice(2, 4).toUpperCase()}
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-bold text-sm">{ping.pingedWallet.slice(0, 8)}...</h3>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(ping.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        {ping.interestedRole} • {ping.collabPost?.role || "Collaboration"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{ping.bio}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 ml-15 mt-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-xs h-7"
-                      onClick={() => handleAcceptPing(ping.id)}
-                      disabled={respondToPingMutation.isPending}
-                    >
-                      Accept
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-xs h-7">
-                      Profile
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-xs h-7 text-muted-foreground"
-                      onClick={() => handleDeclinePing(ping.id)}
-                      disabled={respondToPingMutation.isPending}
-                    >
-                      Decline
-                    </Button>
-                  </div>
-                </div>
+                  ping={ping}
+                  onAccept={handleAcceptPing}
+                  onDecline={handleDeclinePing}
+                  isLoading={respondToPingMutation.isPending}
+                />
               ))
             ) : (
               <div className="glass-card rounded-2xl p-12 text-center">
