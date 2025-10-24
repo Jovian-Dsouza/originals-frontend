@@ -146,9 +146,8 @@ const Onboarding = () => {
 
   const handleZoraLogin = async () => {
     try {
-      const appId: String = import.meta.env.VITE_PRIVY_APP_ID;
-      console.log('Zora login started', appId);
-      await loginWithCrossAppAccount({ appId: "clpgf04wn04hnkw0fv1m11mnb" });
+      const appId: string = import.meta.env.VITE_PRIVY_ZORA_APP_ID;
+      await loginWithCrossAppAccount({ appId: appId });
       console.log('Zora login completed');
     } catch (error) {
       console.error('Zora login failed:', error);
