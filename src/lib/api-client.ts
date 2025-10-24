@@ -51,12 +51,14 @@ class ApiClient {
   private async makeRequest<T>(
     endpoint: string,
     options: RequestInit = {},
-    walletAddress?: string
+    walletAddress?: string,
+    additionalHeaders?: HeadersInit
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
     
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      ...additionalHeaders,
       ...options.headers,
     };
 
@@ -95,31 +97,56 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string, walletAddress?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(endpoint, { method: 'GET' }, walletAddress);
+  async get<T>(endpoint: string, walletAddress?: string, additionalHeaders?: HeadersInit): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, { method: 'GET' }, walletAddress, additionalHeaders);
   }
 
-  async post<T>(endpoint: string, data?: any, walletAddress?: string): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: any, walletAddress?: string, additionalHeaders?: HeadersInit): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
-    }, walletAddress);
+    }, walletAddress, additionalHeaders);
   }
 
-  async patch<T>(endpoint: string, data?: any, walletAddress?: string): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: any, walletAddress?: string, additionalHeaders?: HeadersInit): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(endpoint, {
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
-    }, walletAddress);
+    }, walletAddress, additionalHeaders);
   }
 
-  async delete<T>(endpoint: string, walletAddress?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(endpoint, { method: 'DELETE' }, walletAddress);
+  async delete<T>(endpoint: string, walletAddress?: string, additionalHeaders?: HeadersInit): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, { method: 'DELETE' }, walletAddress, additionalHeaders);
   }
 }
 
 // Create singleton instance
 export const apiClient = new ApiClient(API_CONFIG.BASE_URL);
+
+// Helper function to get JWT auth headers
+export const getAuthHeaders = async (): Promise<HeadersInit> => {
+  try {
+    // Try to get access token from Privy
+    // This will be called from components that have access to Privy context
+    const token = await getPrivyAccessToken();
+    if (token) {
+      return {
+        'Authorization': `Bearer ${token}`,
+      };
+    }
+  } catch (error) {
+    console.warn('Could not retrieve access token:', error);
+  }
+  return {};
+};
+
+// Helper function to get Privy access token
+// This will be overridden by components that have access to Privy context
+let getPrivyAccessToken: () => Promise<string | null> = async () => null;
+
+export const setPrivyAccessTokenGetter = (getter: () => Promise<string | null>) => {
+  getPrivyAccessToken = getter;
+};
 
 // Convenience function for authenticated requests
 export const makeAuthenticatedRequest = <T>(
@@ -127,5 +154,5 @@ export const makeAuthenticatedRequest = <T>(
   options: RequestInit = {},
   walletAddress: string
 ): Promise<ApiResponse<T>> => {
-  return apiClient.makeRequest<T>(endpoint, options, walletAddress);
+  return apiClient.get<T>(endpoint, walletAddress);
 };

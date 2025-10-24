@@ -8,15 +8,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Users, Building2, Sparkles, Camera, Upload, Music, Film, Palette, PenTool, Image, Gamepad2, Lightbulb, Bolt, BadgeDollarSign, Wallet, PersonStanding, Shirt, Smile, Hammer, Wrench } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import HoloIcon from "@/components/HoloIcon";
+import { useWallet } from "@/contexts/WalletContext";
+import { userService } from "@/services/user.service";
+import { OnboardingErrorDialog } from "@/components/OnboardingErrorDialog";
+import type { OnboardingData } from "@/types/user";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { ready, authenticated, login, user } = usePrivy();
   const { wallets } = useWallets();
+  const { 
+    zoraWallet, 
+    isOnboarded, 
+    onboardingError, 
+    retryOnboardingCheck, 
+    setOnboarded,
+    zoraProfile,
+    zoraProfileLoading
+  } = useWallet();
   const [page, setPage] = useState(1);
   const [loginMethod, setLoginMethod] = useState<"wallet" | "email" | null>(null);
   const [userType, setUserType] = useState<"indie" | "commercial" | null>(null);
   const [creativeDomains, setCreativeDomains] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
   const [status, setStatus] = useState<string>("exploring");
   const [profileData, setProfileData] = useState({
     name: "",
@@ -24,6 +38,7 @@ const Onboarding = () => {
     orgName: "",
     orgType: "",
   });
+  const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
   const { loginWithCrossAppAccount } = useCrossAppAccounts();
 
   const creativeDomainOptions = [
@@ -39,6 +54,22 @@ const Onboarding = () => {
     { id: "crafts", label: "Crafts & DIY", subtitle: "Makers, Builders", icon: Hammer },
   ];
 
+  const skillsOptions = [
+    "VFX", "3D Animation", "Motion Graphics", "Color Grading", "Video Editing",
+    "Cinematography", "Sound Design", "Music Production", "Audio Engineering",
+    "Photography", "Photo Editing", "Graphic Design", "UI/UX Design", "Web Design",
+    "Brand Design", "Illustration", "Digital Art", "Traditional Art", "Sculpture",
+    "Writing", "Copywriting", "Screenwriting", "Content Creation", "Social Media",
+    "Marketing", "Strategy", "Project Management", "Team Leadership", "Communication",
+    "Acting", "Directing", "Producing", "Dancing", "Choreography", "Performance",
+    "Fashion Design", "Styling", "Makeup", "Hair Styling", "Set Design",
+    "Lighting", "Grip", "Camera Operation", "Drone Operation", "Live Streaming",
+    "Podcasting", "Voice Acting", "Translation", "Localization", "Research",
+    "Data Analysis", "Programming", "Web Development", "App Development",
+    "Game Development", "AR/VR", "AI/ML", "Blockchain", "NFT Creation",
+    "Event Planning", "Production Management", "Budget Management", "Contract Negotiation"
+  ];
+
   const toggleDomain = (domain: string) => {
     setCreativeDomains(prev => 
       prev.includes(domain) 
@@ -47,13 +78,55 @@ const Onboarding = () => {
     );
   };
 
-  // Handle authentication state changes
+  const toggleSkill = (skill: string) => {
+    setSkills(prev => 
+      prev.includes(skill) 
+        ? prev.filter(s => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  // Debug onboarding state changes
   useEffect(() => {
-    if (ready && authenticated && user) {
-      // User is already authenticated, skip login and go to feed
-      navigate("/feed");
+    console.log('Onboarding page - isOnboarded changed to:', isOnboarded);
+  }, [isOnboarded]);
+
+  // Populate name and tagline from Zora profile when available
+  useEffect(() => {
+    if (zoraProfile) {
+      const name = zoraProfile.displayName || zoraProfile.handle || '';
+      const bio = zoraProfile.bio || '';
+      
+      if (name && !profileData.name) {
+        setProfileData(prev => ({ ...prev, name }));
+        console.log('Populated name from Zora profile:', name);
+      }
+      
+      if (bio && !profileData.tagline) {
+        setProfileData(prev => ({ ...prev, tagline: bio }));
+        console.log('Populated tagline from Zora profile:', bio);
+      }
     }
-  }, [ready, authenticated, user, navigate]);
+  }, [zoraProfile, profileData.name, profileData.tagline]);
+
+  // Handle authentication and onboarding state changes
+  useEffect(() => {
+    console.log('Onboarding page - Auth state:', { ready, authenticated, isOnboarded, zoraWallet });
+    
+    if (ready && authenticated && user) {
+      // Check onboarding status
+      if (isOnboarded === true) {
+        // User is onboarded, redirect to feed
+        console.log('User is onboarded, redirecting to feed');
+        navigate("/feed");
+      } else if (isOnboarded === false) {
+        // User is not onboarded, show onboarding flow (start from page 3)
+        console.log('User is not onboarded, showing onboarding flow');
+        setPage(3);
+      }
+      // If isOnboarded === null, we're still checking, show loading
+    }
+  }, [ready, authenticated, user, isOnboarded, navigate]);
 
   const handleWalletLogin = async () => {
     try {
@@ -82,31 +155,96 @@ const Onboarding = () => {
     }
   };
 
-  // Show loading while Privy is initializing
-  if (!ready) {
+  // Show loading while Privy is initializing or checking onboarding status
+  if (!ready || (authenticated && isOnboarded === null)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <div className="h-12 w-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse" />
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">
+            {!ready ? "Loading..." : "Checking onboarding status..."}
+          </p>
+          
+          {/* Development bypass button */}
+          {authenticated && isOnboarded === null && (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">API taking too long?</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log('Bypassing onboarding check, assuming user needs onboarding');
+                  setOnboarded(false);
+                }}
+              >
+                Skip to Onboarding
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // If user is already authenticated, don't show onboarding
-  if (authenticated && user) {
+  // Show error dialog if onboarding check failed
+  if (onboardingError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <OnboardingErrorDialog
+          isOpen={true}
+          error={onboardingError}
+          onRetry={retryOnboardingCheck}
+        />
+      </div>
+    );
+  }
+
+  // If user is already authenticated and onboarded, don't show onboarding
+  if (authenticated && isOnboarded === true) {
     return null; // This will be handled by the useEffect redirect
   }
 
-  const handleComplete = () => {
-    // Set flag to trigger guided tour
-    sessionStorage.setItem("from-onboarding", "true");
+  const handleComplete = async () => {
+    if (!zoraWallet || !userType) return;
     
-    // Simulate minting animation delay
-    setTimeout(() => {
-      navigate("/feed");
-    }, 2000);
+    setIsCompletingOnboarding(true);
+    
+    try {
+      // Map current form state to API request format
+      const onboardingData: OnboardingData = {
+        userType,
+        creativeDomains,
+        status: status as "available" | "gigs" | "collabs" | "exploring",
+        profileData: {
+          name: profileData.name,
+          tagline: profileData.tagline,
+          orgName: userType === "commercial" ? profileData.orgName : undefined,
+          orgType: userType === "commercial" ? profileData.orgType : undefined,
+          skills: skills, // Use the selected skills
+        },
+        walletAddress: null, // Not collected in current UI
+        zoraWalletAddress: zoraWallet,
+      };
+
+      // Call API to complete onboarding
+      await userService.completeOnboarding(zoraWallet, onboardingData);
+      
+      // Update context and navigate
+      setOnboarded(true);
+      
+      // Set flag to trigger guided tour
+      sessionStorage.setItem("from-onboarding", "true");
+      
+      // Simulate minting animation delay
+      setTimeout(() => {
+        navigate("/feed");
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to complete onboarding:', error);
+      // TODO: Show error message to user
+    } finally {
+      setIsCompletingOnboarding(false);
+    }
   };
 
   return (
@@ -227,22 +365,68 @@ const Onboarding = () => {
                 {/* Name */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Name</label>
-                  <Input
-                    placeholder="Your name or artist name"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                  />
+                  {zoraProfileLoading ? (
+                    <div className="p-3 rounded-lg bg-muted/50 border border-muted">
+                      <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                      <p className="text-xs text-muted-foreground mt-1">Loading from Zora profile...</p>
+                    </div>
+                  ) : profileData.name ? (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                        <p className="text-sm text-primary font-medium">{profileData.name}</p>
+                        <p className="text-xs text-muted-foreground mt-1">From your Zora profile</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProfileData(prev => ({ ...prev, name: "" }))}
+                        className="text-xs"
+                      >
+                        Edit name
+                      </Button>
+                    </div>
+                  ) : (
+                    <Input
+                      placeholder="Your name or artist name"
+                      value={profileData.name}
+                      onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                    />
+                  )}
                 </div>
 
                 {/* Tagline */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Tagline</label>
-                  <Input
-                    placeholder="What you do in one line (60 chars max)"
-                    maxLength={60}
-                    value={profileData.tagline}
-                    onChange={(e) => setProfileData({ ...profileData, tagline: e.target.value })}
-                  />
+                  {zoraProfileLoading ? (
+                    <div className="p-3 rounded-lg bg-muted/50 border border-muted">
+                      <div className="h-4 w-48 bg-muted animate-pulse rounded" />
+                      <p className="text-xs text-muted-foreground mt-1">Loading from Zora profile...</p>
+                    </div>
+                  ) : profileData.tagline ? (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                        <p className="text-sm text-primary font-medium">{profileData.tagline}</p>
+                        <p className="text-xs text-muted-foreground mt-1">From your Zora profile</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProfileData(prev => ({ ...prev, tagline: "" }))}
+                        className="text-xs"
+                      >
+                        Edit tagline
+                      </Button>
+                    </div>
+                  ) : (
+                    <Input
+                      placeholder="What you do in one line (60 chars max)"
+                      maxLength={60}
+                      value={profileData.tagline}
+                      onChange={(e) => setProfileData({ ...profileData, tagline: e.target.value })}
+                    />
+                  )}
                 </div>
 
                 {/* Status Toggle */}
@@ -412,7 +596,7 @@ const Onboarding = () => {
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Next: Enter Your Orbit
+                Next: Select Skills
               </Button>
             </div>
           )}
@@ -491,13 +675,58 @@ const Onboarding = () => {
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Next: Enter Your Orbit
+                Next: Select Skills
               </Button>
             </div>
           )}
 
-          {/* Page 5: Orbit Overview */}
+          {/* Page 5: Skills Selection */}
           {page === 5 && (
+            <div className="glass-card rounded-3xl p-8 space-y-6 animate-fade-in">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-bold">What are your skills?</h2>
+                <p className="text-sm text-muted-foreground">Select your professional skills to help others find you for collaborations.</p>
+              </div>
+
+              <div className="max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {skillsOptions.map((skill) => {
+                    const isSelected = skills.includes(skill);
+                    return (
+                      <button
+                        key={skill}
+                        onClick={() => toggleSkill(skill)}
+                        className={`p-3 rounded-xl border-2 smooth-transition hover:scale-105 text-sm ${
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary font-medium"
+                            : "border-white/10 hover:border-primary/30"
+                        }`}
+                      >
+                        {skill}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-4">
+                  {skills.length} skill{skills.length !== 1 ? 's' : ''} selected
+                </p>
+                <Button
+                  onClick={() => setPage(6)}
+                  disabled={skills.length === 0}
+                  className="w-full bg-gradient-to-r from-primary to-secondary"
+                  size="lg"
+                >
+                  Next: Enter Your Orbit
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Page 6: Orbit Overview */}
+          {page === 6 && (
             <div className="glass-card rounded-3xl p-8 md:p-12 space-y-8 animate-fade-in text-center">
               <div className="relative h-48 w-48 mx-auto">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse-glow opacity-30 blur-2xl" />
@@ -521,17 +750,18 @@ const Onboarding = () => {
 
               <Button
                 onClick={handleComplete}
+                disabled={isCompletingOnboarding}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
                 size="lg"
               >
-                Enter Nexus →
+                {isCompletingOnboarding ? "Completing..." : "Enter Nexus →"}
               </Button>
             </div>
           )}
 
           {/* Progress Indicator */}
           <div className="flex justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((p) => (
+            {[1, 2, 3, 4, 5, 6].map((p) => (
               <div
                 key={p}
                 className={`h-2 rounded-full smooth-transition ${
@@ -547,3 +777,4 @@ const Onboarding = () => {
 };
 
 export default Onboarding;
+
