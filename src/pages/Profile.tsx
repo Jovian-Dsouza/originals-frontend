@@ -6,17 +6,24 @@ import { Settings, Verified, CheckCircle2, Clock, LogOut, Copy } from "lucide-re
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { getProfile, getProfileCoins } from "@zoralabs/coins-sdk";
+import { useWallet } from "@/contexts/WalletContext";
+import { userService } from "@/services/user.service";
+import type { UserProfile } from "@/types/user";
 
 const Profile = () => {
   const { logout, user } = usePrivy();
   const { wallets } = useWallets();
-  const skills = ["VFX", "3D Animation", "Motion Graphics", "Color Grading"];
+  const { zoraWallet } = useWallet();
 
   // Zora profile state
   const [profileData, setProfileData] = useState<any>(null);
   const [profileCoins, setProfileCoins] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // User profile state from onboarding API
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfileLoading, setUserProfileLoading] = useState(false);
 
 
 
@@ -63,6 +70,34 @@ const Profile = () => {
     fetchZoraData();
   }, [user]);
 
+  // Fetch user profile data from onboarding API
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!zoraWallet) return;
+      
+      setUserProfileLoading(true);
+      try {
+        console.log('Fetching user profile for wallet:', zoraWallet);
+        const response = await userService.checkOnboardingStatus(zoraWallet);
+        
+        if (response.isOnboarded && response.data) {
+          setUserProfile(response.data);
+          console.log('User profile loaded:', response.data);
+        } else {
+          console.log('User not onboarded or no profile data');
+          setUserProfile(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        setUserProfile(null);
+      } finally {
+        setUserProfileLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [zoraWallet]);
+
 
   const handleLogout = async () => {
     try {
@@ -76,7 +111,7 @@ const Profile = () => {
     navigator.clipboard.writeText(text);
   };
   
-  // Dynamic stats based on Zora data
+  // Dynamic stats based on Zora data and user profile
   const stats = [
     { 
       label: "CC Market Cap", 
@@ -93,9 +128,11 @@ const Profile = () => {
       change: "+0" // Not available in Zora SDK
     },
     { 
-      label: "Gigs", 
-      value: "47", // Keep hardcoded as not available in Zora SDK
-      change: "+8" 
+      label: "Collabs", 
+      value: userProfileLoading ? "..." : userProfile?.profileData?.collabCount?.toString() || "0",
+      change: userProfileLoading ? "..." : userProfile?.profileData?.deltaCollabs ? 
+        `${userProfile.profileData.deltaCollabs >= 0 ? '+' : ''}${userProfile.profileData.deltaCollabs}` : 
+        "+0"
     },
   ];
 
@@ -252,11 +289,24 @@ const Profile = () => {
                 )}
               </p>
               <div className="flex gap-2 flex-wrap">
-                {skills.map((skill) => (
-                  <Badge key={skill} variant="secondary" className="text-xs">
-                    {skill}
-                  </Badge>
-                ))}
+                {userProfileLoading ? (
+                  <div className="flex gap-2">
+                    <div className="h-6 w-16 bg-muted animate-pulse rounded" />
+                    <div className="h-6 w-20 bg-muted animate-pulse rounded" />
+                    <div className="h-6 w-14 bg-muted animate-pulse rounded" />
+                  </div>
+                ) : (
+                  <>
+                    {(userProfile?.profileData?.skills || []).map((skill) => (
+                      <Badge key={skill} variant="secondary" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                    {(!userProfile?.profileData?.skills || userProfile.profileData.skills.length === 0) && (
+                      <p className="text-sm text-muted-foreground">No skills added yet</p>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -395,11 +445,25 @@ const Profile = () => {
               </h3>
               <div className="glass-card rounded-2xl p-6">
                 <div className="flex gap-2 flex-wrap">
-                  {skills.map((skill) => (
-                    <Badge key={skill} variant="secondary">
-                      {skill}
-                    </Badge>
-                  ))}
+                  {userProfileLoading ? (
+                    <div className="flex gap-2">
+                      <div className="h-6 w-16 bg-muted animate-pulse rounded" />
+                      <div className="h-6 w-20 bg-muted animate-pulse rounded" />
+                      <div className="h-6 w-14 bg-muted animate-pulse rounded" />
+                      <div className="h-6 w-18 bg-muted animate-pulse rounded" />
+                    </div>
+                  ) : (
+                    <>
+                      {(userProfile?.profileData?.skills || []).map((skill) => (
+                        <Badge key={skill} variant="secondary">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {(!userProfile?.profileData?.skills || userProfile.profileData.skills.length === 0) && (
+                        <p className="text-sm text-muted-foreground">No skills added yet</p>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
