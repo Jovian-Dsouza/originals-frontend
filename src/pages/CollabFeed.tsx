@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Filter, X, Heart, Info, Handshake } from "lucide-react";
 import { useCollabFeed, usePingCollab } from "@/hooks/useCollabs";
 import { useWallet } from "@/contexts/WalletContext";
 import { CollabCardSkeleton } from "@/components/LoadingStates";
+import { UserProfileDisplay } from "@/components/UserProfileDisplay";
 import type { CollabFeedFilters } from "@/types/collab";
 
 const CollabFeed = () => {
@@ -205,8 +205,8 @@ const CollabFeed = () => {
                 {/* Card Image */}
                 <div className="relative h-3/5">
                   <img
-                    src={collab.coinData?.mediaContent?.previewImage || "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800"}
-                    alt={collab.coinData?.name || "Collaboration"}
+                    src={collab.media?.gatewayUrl || "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800"}
+                    alt={collab.title || "Collaboration"}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -222,19 +222,16 @@ const CollabFeed = () => {
                 {/* Card Content */}
                 <div className="p-6 space-y-4">
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">{collab.coinData?.name || "Untitled Project"}</h2>
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6 border border-primary/20">
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                          {collab.creatorWallet.slice(2, 4).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <p className="text-sm text-muted-foreground">@{collab.creatorWallet.slice(0, 8)}...</p>
-                    </div>
+                    <h2 className="text-3xl font-bold mb-2">{collab.title || "Untitled Project"}</h2>
+                    <UserProfileDisplay 
+                      walletAddress={collab.creatorWallet}
+                      avatarSize="sm"
+                      className="text-sm"
+                    />
                   </div>
 
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {collab.coinData?.description || "No description available"}
+                    {collab.description || "No description available"}
                   </p>
 
                   <div className="flex flex-wrap gap-2">
@@ -338,15 +335,12 @@ const CollabFeed = () => {
             
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold text-lg mb-2">{currentCollab.coinData?.name || "Untitled Project"}</h4>
-                <div className="flex items-center gap-2 mb-3">
-                  <Avatar className="h-8 w-8 border border-primary/20">
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                      {currentCollab.creatorWallet.slice(2, 4).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-sm text-muted-foreground">@{currentCollab.creatorWallet.slice(0, 8)}...</p>
-                </div>
+                <h4 className="font-semibold text-lg mb-2">{currentCollab.title || "Untitled Project"}</h4>
+                <UserProfileDisplay 
+                  walletAddress={currentCollab.creatorWallet}
+                  avatarSize="md"
+                  className="mb-3"
+                />
               </div>
               
               <div>
@@ -358,7 +352,7 @@ const CollabFeed = () => {
               
               <div>
                 <h5 className="font-medium mb-2">Description</h5>
-                <p className="text-sm text-muted-foreground">{currentCollab.coinData?.description || "No description available"}</p>
+                <p className="text-sm text-muted-foreground">{currentCollab.description || "No description available"}</p>
               </div>
               
               <div>

@@ -1,11 +1,24 @@
 // Collaboration Post Types
+import type { PaginationInfo } from '../lib/api-client';
 export interface CollaborationPost {
   id: string;
   coinAddress: string;
   creatorWallet: string;
+  title: string;
+  description: string;
+  media?: {
+    ipfsUrl: string;
+    fileName: string;
+    fileSize: number;
+    fileType: string;
+    gatewayUrl: string;
+  };
+  metadata?: any;
+  coinName: string;
+  coinSymbol: string;
   role: string;
   paymentType: "paid" | "barter" | "both";
-  credits: boolean;
+  credits: number;
   workStyle: "contract" | "freestyle";
   location: string;
   status: "open" | "shortlisted" | "signed" | "closed";
@@ -205,5 +218,3 @@ export type UpdateCollabStatusResponse = {
   message: string;
 };
 
-// Re-export PaginationInfo from api-client
-export type { PaginationInfo } from './api-client';
