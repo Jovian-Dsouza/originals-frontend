@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { UserProfileDisplay } from "@/components/UserProfileDisplay";
+import { useZoraProfile, getDisplayName } from "@/hooks/useZoraProfile";
 import { ExternalLink, CheckCircle2, X } from "lucide-react";
 import type { Ping } from "@/types/collab";
 
@@ -11,8 +12,12 @@ interface PingCardProps {
 }
 
 export const PingCard = ({ ping, onAccept, onDecline, isLoading = false }: PingCardProps) => {
+
+  const { profile } = useZoraProfile(ping.pingedWallet || '');
+  const displayName = getDisplayName(profile, ping.pingedWallet || '');
+
   const handleProfileClick = () => {
-    const profileUrl = `https://zora.co/@${ping.collabPost?.creatorWallet}`;
+    const profileUrl = `https://zora.co/@${ping.pingedWallet}`;
     window.open(profileUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -21,7 +26,7 @@ export const PingCard = ({ ping, onAccept, onDecline, isLoading = false }: PingC
       <div className="flex items-start gap-3 mb-3">
         {/* User Avatar */}
         <UserProfileDisplay 
-          walletAddress={ping.collabPost?.creatorWallet || ''} 
+          walletAddress={ping.pingedWallet || ''} 
           avatarSize="md"
           showName={false}
           className="flex-shrink-0"
@@ -35,7 +40,7 @@ export const PingCard = ({ ping, onAccept, onDecline, isLoading = false }: PingC
             </span>
           </div>
           <p className="text-xs text-muted-foreground mb-1">
-            {ping.collabPost?.creatorWallet ? `@${ping.collabPost.creatorWallet.slice(0, 8)}...` : 'Unknown User'}
+            {displayName}
           </p>
           <p className="text-xs text-muted-foreground">{ping.bio}</p>
         </div>

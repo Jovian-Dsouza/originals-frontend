@@ -7,6 +7,7 @@ import { useReceivedPings, useRespondToPing, useMatches } from "@/hooks/useMatch
 import { useWallet } from "@/contexts/WalletContext";
 import { PingItemSkeleton, MatchItemSkeleton } from "@/components/LoadingStates";
 import { PingCard } from "@/components/PingCard";
+import { MatchCard } from "@/components/MatchCard";
 import { useNavigate } from "react-router-dom";
 
 const Contracts = () => {
@@ -108,47 +109,11 @@ const Contracts = () => {
               </div>
             ) : matchedCollabs.length > 0 ? (
               matchedCollabs.map((collab) => (
-                <div
+                <MatchCard
                   key={collab.id}
-                  className="border-b border-white/10 hover:bg-muted/30 smooth-transition cursor-pointer"
+                  match={collab}
                   onClick={() => navigate(`/match/${collab.id}`)}
-                >
-                  <div className="p-4 flex items-center gap-4">
-                    <div className="relative">
-                      <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-                        <div className="text-white font-bold text-sm">
-                          {collab.otherUser?.wallet.slice(2, 4).toUpperCase() || "??"}
-                        </div>
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-secondary border-2 border-background" />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-bold truncate">{collab.projectName}</h3>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(collab.lastMessageAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      
-                      <p className="text-sm text-muted-foreground truncate mb-1">
-                        {collab.role} • @{collab.otherUser?.wallet.slice(0, 8)}...
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground truncate flex items-center gap-2">
-                          <MessageCircle className="h-3 w-3" />
-                          Last message
-                        </p>
-                        {collab.unreadCount > 0 && (
-                          <Badge className="bg-primary text-xs h-5 w-5 p-0 flex items-center justify-center rounded-full">
-                            {collab.unreadCount}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                />
               ))
             ) : (
               <div className="glass-card rounded-2xl p-12 text-center">
