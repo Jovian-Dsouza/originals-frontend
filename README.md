@@ -11,6 +11,13 @@
 
 Creators frequently have content ideas requiring collaborators (writers, editors, producers), yet managing who gets what share, handling attribution, and distributing revenue is messy and often off-chain. Originals solves this by leveraging Zora's Coins Protocol to create a transparent, on-chain collaboration marketplace.
 
+[Live Website](https://originals.jovihost.site/)
+Note: Some of the features that require ZORA write access is not supported. This feature will work once this application is whitelisted on the Zora's Privy admin. Until then we have used base sepolia smart contract functions signed with privy linked wallet.
+
+## 🏗️ Contract Addresses
+- CollaborativePayoutImplementation: 0x06B03991BFAC8Bc81Acf5Ab75109b08aCbcC34c3 
+- CollaborativePayoutFactory: 0x3Eed8abBc037A34FbC2626aAeB6C3D0d19100A71
+
 ## ✨ Key Features
 
 ### 🚀 **Dynamic Collaboration Model**
@@ -67,7 +74,6 @@ Creators frequently have content ideas requiring collaborators (writers, editors
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/originals-frontend.git
    cd originals-frontend
    ```
 
