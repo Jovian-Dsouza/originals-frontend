@@ -40,3 +40,6 @@ services:
     networks:
       - dokploy-network
 
+networks:
+  dokploy-network:
+    external: true
